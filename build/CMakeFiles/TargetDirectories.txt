@@ -1,0 +1,10 @@
+/home/hvh/MyGit/SphericalProjection/build/CMakeFiles/install/strip.dir
+/home/hvh/MyGit/SphericalProjection/build/CMakeFiles/install/local.dir
+/home/hvh/MyGit/SphericalProjection/build/CMakeFiles/install.dir
+/home/hvh/MyGit/SphericalProjection/build/CMakeFiles/list_install_components.dir
+/home/hvh/MyGit/SphericalProjection/build/CMakeFiles/rebuild_cache.dir
+/home/hvh/MyGit/SphericalProjection/build/CMakeFiles/edit_cache.dir
+/home/hvh/MyGit/SphericalProjection/build/CMakeFiles/uninstall.dir
+/home/hvh/MyGit/SphericalProjection/build/CMakeFiles/main.dir
+/home/hvh/MyGit/SphericalProjection/build/CMakeFiles/CSVReader.dir
+/home/hvh/MyGit/SphericalProjection/build/CMakeFiles/SphericalProjection.dir

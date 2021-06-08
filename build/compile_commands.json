@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/home/hvh/MyGit/SphericalProjection/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/hvh/MyGit/SphericalProjection/include -I/home/hvh/MyGit/SphericalProjection/src -isystem /home/hvh/Libraries/OpenCV_4_5_2/install_with_GTK/include/opencv4  -g   -std=gnu++11 -o CMakeFiles/main.dir/src/main.cpp.o -c /home/hvh/MyGit/SphericalProjection/src/main.cpp",
+  "file": "/home/hvh/MyGit/SphericalProjection/src/main.cpp"
+},
+{
+  "directory": "/home/hvh/MyGit/SphericalProjection/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/hvh/MyGit/SphericalProjection/include -I/home/hvh/MyGit/SphericalProjection/src -I/home/hvh/Libraries/OpenCV_4_5_2/install_with_GTK/include/opencv4  -g   -std=gnu++11 -o CMakeFiles/CSVReader.dir/src/CSVReader.cpp.o -c /home/hvh/MyGit/SphericalProjection/src/CSVReader.cpp",
+  "file": "/home/hvh/MyGit/SphericalProjection/src/CSVReader.cpp"
+},
+{
+  "directory": "/home/hvh/MyGit/SphericalProjection/build",
+  "command": "/bin/x86_64-linux-gnu-g++-9   -I/home/hvh/MyGit/SphericalProjection/include -I/home/hvh/MyGit/SphericalProjection/src -isystem /home/hvh/Libraries/OpenCV_4_5_2/install_with_GTK/include/opencv4  -g   -std=gnu++11 -o CMakeFiles/SphericalProjection.dir/src/SphericalProjection.cpp.o -c /home/hvh/MyGit/SphericalProjection/src/SphericalProjection.cpp",
+  "file": "/home/hvh/MyGit/SphericalProjection/src/SphericalProjection.cpp"
+}
+]

@@ -1,2 +1,2 @@
-# SphericalProjection
- Spherical projection of LIDAR Pointcloud to image
+# CMake_template
+ CMake template

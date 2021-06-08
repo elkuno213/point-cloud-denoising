@@ -1,0 +1,29 @@
+# ==================
+# Default parameters
+# ==================
+set(CMAKE_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/install")
+set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_DIR}/lib")
+set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_DIR}/bin")
+set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_DIR}/include")
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_LIBDIR}" CACHE PATH "Link libraries in install directory")
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/install" CACHE PATH "Installation Directory" FORCE)
+
+
+# ====================================
+# Function to get all existing targets
+# ====================================
+function(get_all_targets var)
+    set(targets)
+    get_all_targets_recursive(targets ${CMAKE_CURRENT_SOURCE_DIR})
+    set(${var} ${targets} PARENT_SCOPE)
+endfunction()
+
+macro(get_all_targets_recursive targets dir)
+    get_property(subdirectories DIRECTORY ${dir} PROPERTY SUBDIRECTORIES)
+    foreach(subdir ${subdirectories})
+        get_all_targets_recursive(${targets} ${subdir})
+    endforeach()
+
+    get_property(current_targets DIRECTORY ${dir} PROPERTY BUILDSYSTEM_TARGETS)
+    list(APPEND ${targets} ${current_targets})
+endmacro()
