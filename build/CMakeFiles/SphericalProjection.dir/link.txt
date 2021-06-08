@@ -1,2 +1,0 @@
-/bin/ar qc libSphericalProjection.a  CMakeFiles/SphericalProjection.dir/src/SphericalProjection.cpp.o
-/bin/ranlib libSphericalProjection.a
