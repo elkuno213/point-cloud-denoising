@@ -2,7 +2,7 @@
  * @name TEMPLATE FOR AUTONOMOUS DRIVING COMPONENTS
  * @copyright Gaussin Manugistique S.A. (c)
  * @author Vu-Hoi HUYNH
- * @brief 
+ * @brief CSV reader library.
  * @version 1.0
  * @date 02/06/2021
  * @comment 

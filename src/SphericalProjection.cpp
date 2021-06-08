@@ -33,13 +33,18 @@ SphericalProjection::~SphericalProjection() {
 PUBLIC METHODS
 ******************************************************************************************************************************************************/
 /** @brief Set parameters for object.
-	@param _nbParticles Input number of particles to be processed
-	@param _sizePointCloud Input number of LIDAR points
+	@param _height Input image height
+	@param _width Input image width
+	@param _elevation_max Input maximum elevation
+	@param _elevation_min Input minimum elevation
+	@param _delta_elevation Input elevation resolution
+	@param _azimuth_max Input maximum azimuth
+	@param _azimuth_min Input minimum azimuth
+	@param _delta_azimuth Input azimuth resolution
 **/
 void SphericalProjection::setParameters(int _height, int _width,
-										double _elevation_max, double _elevation_min,
-										double _delta_elevation, double _azimuth_max,
-										double _azimuth_min, double _delta_azimuth) {
+										double _elevation_max, double _elevation_min, double _delta_elevation, 
+										double _azimuth_max, double _azimuth_min, double _delta_azimuth) {
 	this->height 			= _height;			// pixel
 	this->width 			= _width;			// pixel
 	this->elevation_max 	= _elevation_max;	// degree
@@ -51,8 +56,8 @@ void SphericalProjection::setParameters(int _height, int _width,
 }
 
 /** @brief Read input for object.
-	@param _iDistances Input distance data
 	@param _iAzimuths Input azimuth data
+	@param _iDistances Input distance data
 	@param _iIntensities Input intensity data
 **/
 void SphericalProjection::readInputs(	std::vector<double>& _iAzimuths,
@@ -64,7 +69,8 @@ void SphericalProjection::readInputs(	std::vector<double>& _iAzimuths,
 	this->iIntensities 	= _iIntensities;
 }
 
-/** @brief Process data for object.
+/** @brief Write out the processed data.
+	@param _oImage Input image projected
 **/
 void SphericalProjection::processData() {
 	// Correct image size
@@ -82,6 +88,7 @@ void SphericalProjection::processData() {
 		for (int j {0}; j < this->height; ++j) {
 			int pixel_u = 0, pixel_v = 0;
 			pixelProjection(elevation, this->iAzimuths[i], &pixel_u, &pixel_v);
+			// projectionModel(elevation, this->iAzimuths[i], &pixel_u, &pixel_v);
 			this->oImage.at<cv::Vec4d>(pixel_u, pixel_v) = cv::Vec4d{elevation, this->iAzimuths[i], 
 																	 this->iDistances[this->height * i + j], 
 																	 this->iIntensities[this->height * i + j]};
@@ -101,8 +108,8 @@ void SphericalProjection::writeOutputs(cv::Mat& _oImage) {
 /** @brief Project a point into image plane.
 	@param elevation Input elevation value
 	@param azimuth Input azimuth value
-	@param u Output pixel element u
-	@param v Output pixel element v
+	@param pixel_u Output pixel element u
+	@param pixel_v Output pixel element v
 **/
 void SphericalProjection::pixelProjection(const double elevation, const double azimuth, int* pixel_u, int* pixel_v) {
 	// Calculate pixel u and make sure that it is in the range [0, this->height - 1]
@@ -113,6 +120,26 @@ void SphericalProjection::pixelProjection(const double elevation, const double a
 
 	// Calculate pixel v and make sure that it is in the range [0, this->width - 1]
 	int v = round((azimuth - this->azimuth_min) * (this->width - 1) / (this->azimuth_max - this->azimuth_min));
+	v = std::min(this->width - 1, v);
+	v = std::max(0, v);
+	*pixel_v = int(v);
+}
+
+/** @brief Project a point into image plane.
+	@param elevation Input elevation value
+	@param azimuth Input azimuth value
+	@param pixel_u Output pixel element u
+	@param pixel_v Output pixel element v
+**/
+void SphericalProjection::projectionModel(const double elevation, const double azimuth, int* pixel_u, int* pixel_v) {
+	// Calculate pixel u and make sure that it is in the range [0, this->height - 1]
+	int u = tan(elevation) * cos(azimuth) * this->height;
+	u = std::min(this->height - 1, u);
+	u = std::max(0, u);
+	*pixel_u = int(u);
+
+	// Calculate pixel v and make sure that it is in the range [0, this->width - 1]
+	int v = tan(elevation) * sin(azimuth) * this->width;
 	v = std::min(this->width - 1, v);
 	v = std::max(0, v);
 	*pixel_v = int(v);

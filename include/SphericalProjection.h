@@ -11,7 +11,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <math.h>
+// #include <math.h>
 #include <opencv2/opencv.hpp>
 
 #ifndef _SphericalProjection_H
@@ -49,16 +49,22 @@ public:
 // Public methods
 public:
 	/** @brief Set parameters for object.
-    	@param _normalizeScores Input boolean variable to normalize score vector
+    	@param _height Input image height
+    	@param _width Input image width
+    	@param _elevation_max Input maximum elevation
+    	@param _elevation_min Input minimum elevation
+    	@param _delta_elevation Input elevation resolution
+    	@param _azimuth_max Input maximum azimuth
+    	@param _azimuth_min Input minimum azimuth
+    	@param _delta_azimuth Input azimuth resolution
     **/
 	void setParameters(	int _height, int _width,
-						double _elevation_max, double _elevation_min,
-						double _delta_elevation, double _azimuth_max,
-						double _azimuth_min, double _delta_azimuth);
+						double _elevation_max, double _elevation_min, double _delta_elevation, 
+						double _azimuth_max, double _azimuth_min, double _delta_azimuth);
 
 	/** @brief Read input for object.
-		@param _iDistances Input distance data
 		@param _iAzimuths Input azimuth data
+		@param _iDistances Input distance data
 		@param _iIntensities Input intensity data
     **/
 	void readInputs(std::vector<double>& _iAzimuths,
@@ -69,7 +75,7 @@ public:
     **/
 	void processData();
 
-	/** @brief Process data for object.
+	/** @brief Write out the processed data.
     	@param _oImage Input image projected
     **/
 	void writeOutputs(cv::Mat& _oImage);
@@ -77,10 +83,18 @@ public:
 	/** @brief Project a point into image plane.
 		@param elevation Input elevation value
 		@param azimuth Input azimuth value
-		@param u Output pixel element u
-		@param v Output pixel element v
+		@param pixel_u Output pixel element u
+		@param pixel_v Output pixel element v
     **/
 	void pixelProjection(const double elevation, const double azimuth, int* pixel_u, int* pixel_v);
+
+	/** @brief Project a point into image plane.
+		@param elevation Input elevation value
+		@param azimuth Input azimuth value
+		@param pixel_u Output pixel element u
+		@param pixel_v Output pixel element v
+    **/
+	void projectionModel(const double elevation, const double azimuth, int* pixel_u, int* pixel_v);
 	
 // Private methods
 private:

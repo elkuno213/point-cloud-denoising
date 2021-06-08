@@ -2,7 +2,7 @@
  * @name TEMPLATE FOR AUTONOMOUS DRIVING COMPONENTS
  * @copyright Gaussin Manugistique S.A. (c)
  * @author Vu-Hoi HUYNH
- * @brief 
+ * @brief CSV reader library.
  * @version 1.0
  * @date 02/06/2021
  * @comment 
@@ -19,15 +19,15 @@ class CSVReader {
 
 private:
 	// Inputs
-	std::string iPath;								// Path to data file
+	std::string iPath;							// Path to data file
 
 	// Outputs
-	std::vector<std::vector<double>> oData;			// Output data 2D vector
+	std::vector<std::vector<double>> oData;		// Output data 2D vector
 	
 	// Parameters
-	double unit;									// Data unit coefficient
-	int columnNameIdx;						// Zero-based row index of the column labels (-1 gives access to all rows as document data)
-	int rowNameIdx;							// Zero-based column index of the row labels (-1 gives access to all columns as document data)
+	double unit;								// Data unit coefficient
+	int columnNameIdx;							// Zero-based row index of the column labels (-1 gives access to all rows as document data)
+	int rowNameIdx;								// Zero-based column index of the row labels (-1 gives access to all columns as document data)
 
 // Constructors & Destructors
 public:

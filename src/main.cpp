@@ -34,9 +34,9 @@ int main(int argc, char* argv[])
     // Parameters
     int height = 32, width = 1000;
     std::string nameLIDAR = "Back";
-    std::string nameCase = "009_32x1000";
+    std::string nameCase = "018_32x1000";
 
-    // // Azimuths
+    // Azimuths
     CSVReader azimuthReader;
     std::vector<std::vector<double>> azimuthData;
     azimuthReader.setParameters(0.01, -1, 0);
@@ -73,14 +73,18 @@ int main(int argc, char* argv[])
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
     cv::VideoWriter videoIntensity(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/Intensity.avi", 
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
-    // cv::VideoWriter videoEAD(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/EAD.avi", 
+    cv::VideoWriter videoEAD(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/EAD.avi", 
+                                cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), true);
+    cv::VideoWriter videoEAI(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/EAI.avi", 
+                                cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), true);
+    // cv::VideoWriter videoDI(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/DI.avi", 
     //                             cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), true);
 
     // Spherical projection 
     for (int i {0}; i < azimuthData.size(); ++i) {
         cv::Mat oImage;
         SphericalProjection sp;
-        sp.setParameters(height, width, 15.0, -16.0, 1.0, 360.0, 0.0, 0.09);
+        sp.setParameters(height, width, 15.0, -16.0, 1.0, 360.0, 0.0, 0.18);
         sp.readInputs(azimuthData[i], distanceData[i], intensityData[i]);
         sp.processData();
         sp.writeOutputs(oImage);
@@ -89,22 +93,22 @@ int main(int argc, char* argv[])
         std::vector<cv::Mat> channels(4);
         cv::split(oImage, channels);
         
-        // // Elevation image
-        // cv::Mat elevationImage = channels[0];
-        // // displayMinMaxLoc(elevationImage);
-        // cv::normalize(elevationImage, elevationImage, 0.0, 255.0, cv::NORM_MINMAX);
-        // // displayMinMaxLoc(elevationImage);
-        // elevationImage.convertTo(elevationImage, CV_8UC1);
-        // // videoElevation.write(elevationImage);
+        // Elevation image
+        cv::Mat elevationImage = channels[0];
+        // displayMinMaxLoc(elevationImage);
+        cv::normalize(elevationImage, elevationImage, 0.0, 255.0, cv::NORM_MINMAX);
+        // displayMinMaxLoc(elevationImage);
+        elevationImage.convertTo(elevationImage, CV_8UC1);
+        // videoElevation.write(elevationImage);
         // cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/elevationImages/elevationImage" + std::to_string(i) + ".png", elevationImage);
         
-        // // Azimuth image
-        // cv::Mat azimuthImage = channels[1];
-        // // displayMinMaxLoc(azimuthImage);
-        // cv::normalize(azimuthImage, azimuthImage, 0.0, 255.0, cv::NORM_MINMAX);
-        // // displayMinMaxLoc(azimuthImage);
-        // azimuthImage.convertTo(azimuthImage, CV_8UC1);
-        // // videoDistance.write(azimuthImage);
+        // Azimuth image
+        cv::Mat azimuthImage = channels[1];
+        // displayMinMaxLoc(azimuthImage);
+        cv::normalize(azimuthImage, azimuthImage, 0.0, 255.0, cv::NORM_MINMAX);
+        // displayMinMaxLoc(azimuthImage);
+        azimuthImage.convertTo(azimuthImage, CV_8UC1);
+        // videoDistance.write(azimuthImage);
         // cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/azimuthImages/azimuthImage" + std::to_string(i) + ".png", azimuthImage);
 
         // Distance image
@@ -112,32 +116,53 @@ int main(int argc, char* argv[])
         // displayMinMaxLoc(distanceImage);
         cv::normalize(distanceImage, distanceImage, 0.0, 255.0, cv::NORM_MINMAX);
         // displayMinMaxLoc(distanceImage);
-        // distanceImage.convertTo(distanceImage, CV_8UC1);
-        // videoDistance.write(distanceImage);
-        cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/distanceImages/distanceImage" + std::to_string(i) + ".exr", distanceImage);
+        distanceImage.convertTo(distanceImage, CV_8UC1);
+        videoDistance.write(distanceImage);
+        cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/distanceImages/distanceImage" + std::to_string(i) + ".png", distanceImage);
 
         // Intensity image
         cv::Mat intensityImage = channels[3];
-        // intensityImage.convertTo(intensityImage, CV_8UC1);
-        // videoIntensity.write(intensityImage);
-        cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/intensityImages/intensityImage" + std::to_string(i) + ".exr", intensityImage);
+        intensityImage.convertTo(intensityImage, CV_8UC1);
+        videoIntensity.write(intensityImage);
+        cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/intensityImages/intensityImage" + std::to_string(i) + ".png", intensityImage);
 
-        // // Elevation, Azimuth, Distance
-        // cv::Mat EAD;
-        // std::vector<cv::Mat> channels1;
-        // channels1.push_back(elevationImage);
-        // channels1.push_back(azimuthImage);
-        // channels1.push_back(distanceImage);
-        // merge(channels1, EAD);
-        // cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/EADImages/EADImage" + std::to_string(i) + ".png", EAD);
-        // // videoEAD.write(EAD);
+        // Elevation, Azimuth, Distance
+        cv::Mat EAD;
+        std::vector<cv::Mat> channelEAD;
+        channelEAD.push_back(elevationImage);
+        channelEAD.push_back(azimuthImage);
+        channelEAD.push_back(distanceImage);
+        merge(channelEAD, EAD);
+        videoEAD.write(EAD);
+        cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/EADImages/EADImage" + std::to_string(i) + ".png", EAD);
+
+        // Elevation, Azimuth, Intensity
+        cv::Mat EAI;
+        std::vector<cv::Mat> channelEAI;
+        channelEAI.push_back(elevationImage);
+        channelEAI.push_back(azimuthImage);
+        channelEAI.push_back(intensityImage);
+        merge(channelEAI, EAI);
+        videoEAD.write(EAI);
+        cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/EAIImages/EAIImage" + std::to_string(i) + ".png", EAI);
+
+        // // Distance, Intensity
+        // cv::Mat DI;
+        // std::vector<cv::Mat> channelDI;
+        // channelDI.push_back(distanceImage);
+        // channelDI.push_back(distanceImage);
+        // merge(channelDI, DI);
+        // cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/DIImages/DIImage" + std::to_string(i) + ".png", DI);
+        // // videoEAD.write(DI);
     }
 
     // videoElevation.release();
     // videoAzimuth.release();
     videoDistance.release();
     videoIntensity.release();
-    // videoEAD.release();
+    videoEAD.release();
+    videoEAI.release();
+    // videoDI.release();
                          
     return 0;
 }

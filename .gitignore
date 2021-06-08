@@ -1,5 +1,3 @@
-data/Logs/Log_2min
-data/Logs/Log_30s
-data/Logs/Log_2min.zip
-data/Logs/Log_05s.zip
-data/Logs/Log_30s.zip
+data
+build
+.vscode
