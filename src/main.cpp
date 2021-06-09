@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
 #include "rapidcsv.h"
-#include "CSVReader.h"
-#include "SphericalProjection.h"
+#include "CSVReader.hpp"
+#include "SphericalProjection.hpp"
 #include <opencv2/opencv.hpp>
 
 void displayMinMaxLoc(cv::Mat& image)
@@ -36,42 +36,39 @@ int main(int argc, char* argv[])
 	int width 			    = 1000;		// pixel
 	double elevation_max 	= 15.0;		// degree
 	double elevation_min 	= -16.0;	// degree
-	double delta_elevation  = 1.0;		// degree
-	double azimuth_max 	    = 360.0;	// degree
-	double azimuth_min 	    = 0.0;		// degree
+	double delta_elevation 	= 1.0;		// degree
+	double azimuth_max 		= 360.0;	// degree
+	double azimuth_min 		= 0.0;		// degree
 	double delta_azimuth 	= 0.18;		// degree
-    std::string nameLIDAR = "Back";
-    std::string nameCase = "018_32x1000";
+    std::string nameLIDAR = "Front";
+    std::string nameCase = std::to_string(delta_azimuth).substr(0, 4) + "_" + std::to_string(height) + "x" + std::to_string(width);
 
     // Azimuth reading
     CSVReader azimuthReader;
     std::vector<std::vector<double>> azimuthData;
     azimuthReader.setParameters(0.01, -1, 0);
-    azimuthReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_05s/" + nameLIDAR + "Azimuths.csv");
+    azimuthReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_05/" + nameLIDAR + "Azimuths.csv");
     azimuthReader.processData();
     azimuthReader.writeOutputs(azimuthData);
     std::cout << "azimuthData:\t(" << azimuthData.size() << " rows, " << azimuthData[0].size() << " cols)" << std::endl;
-    // display2DVector(azimuthData);
 
     // Distance reading
     CSVReader distanceReader;
     std::vector<std::vector<double>> distanceData;
     distanceReader.setParameters(0.004, -1, 0);
-    distanceReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_05s/" + nameLIDAR + "Distances.csv");
+    distanceReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_05/" + nameLIDAR + "Distances.csv");
     distanceReader.processData();
     distanceReader.writeOutputs(distanceData);
     std::cout << "distanceData:\t(" << distanceData.size() << " rows, " << distanceData[0].size() << " cols)" << std::endl;
-    // display2DVector(distanceData);
 
     // Intensity reading
     CSVReader intensityReader;
     std::vector<std::vector<double>> intensityData;
     intensityReader.setParameters(1, -1, 0);
-    intensityReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_05s/" + nameLIDAR + "Intensities.csv");
+    intensityReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_05/" + nameLIDAR + "Intensities.csv");
     intensityReader.processData();
     intensityReader.writeOutputs(intensityData);
     std::cout << "intensityData:\t(" << intensityData.size() << " rows, " << intensityData[0].size() << " cols)" << std::endl;
-    // display2DVector(intensityData);
 
     // Video objects
     cv::VideoWriter videoDistance(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/Distance.avi", 
@@ -82,12 +79,12 @@ int main(int argc, char* argv[])
                                 cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), true);
     cv::VideoWriter videoEAI(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/EAI.avi", 
                                 cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), true);
-
+                                
     // Spherical projection 
     for (int i {0}; i < azimuthData.size(); ++i) {
         cv::Mat oImage;
         SphericalProjection sp;
-        sp.setParameters(height, width, 15.0, -16.0, 1.0, 360.0, 0.0, 0.18);
+        sp.setParameters(height, width, elevation_max, elevation_min, delta_elevation, azimuth_max, azimuth_min, delta_azimuth);
         sp.readInputs(azimuthData[i], distanceData[i], intensityData[i]);
         sp.processData();
         sp.writeOutputs(oImage);
@@ -100,15 +97,16 @@ int main(int argc, char* argv[])
         cv::Mat elevationImage = channels[0];
         cv::normalize(elevationImage, elevationImage, 0.0, 255.0, cv::NORM_MINMAX);
         elevationImage.convertTo(elevationImage, CV_8UC1);
-
+        
         // Azimuth image
         cv::Mat azimuthImage = channels[1];
         cv::normalize(azimuthImage, azimuthImage, 0.0, 255.0, cv::NORM_MINMAX);
         azimuthImage.convertTo(azimuthImage, CV_8UC1);
-
+        
         // Distance image
         cv::Mat distanceImage = channels[2];
         cv::normalize(distanceImage, distanceImage, 0.0, 255.0, cv::NORM_MINMAX);
+        // cv::subtract(cv::Scalar::all(255.0), distanceImage, distanceImage);
         distanceImage.convertTo(distanceImage, CV_8UC1);
         videoDistance.write(distanceImage);
         cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/distanceImages/distanceImage" + std::to_string(i) + ".png", distanceImage);

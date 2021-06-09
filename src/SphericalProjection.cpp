@@ -8,7 +8,7 @@
  * @comment 
  */
 
-#include "SphericalProjection.h"
+#include "SphericalProjection.hpp"
 
 /******************************************************************************************************************************************************
 CONSTRUCTORS & DESTRUCTORS
@@ -33,14 +33,14 @@ SphericalProjection::~SphericalProjection() {
 PUBLIC METHODS
 ******************************************************************************************************************************************************/
 /** @brief Set parameters for object.
-	@param _height Input image height
-	@param _width Input image width
-	@param _elevation_max Input maximum elevation
-	@param _elevation_min Input minimum elevation
-	@param _delta_elevation Input elevation resolution
-	@param _azimuth_max Input maximum azimuth
-	@param _azimuth_min Input minimum azimuth
-	@param _delta_azimuth Input azimuth resolution
+	@param _height Input image height (pixel)
+	@param _width Input image width (pixel)
+	@param _elevation_max Input maximum elevation (degree)
+	@param _elevation_min Input minimum elevation (degree)
+	@param _delta_elevation Input elevation resolution (degree)
+	@param _azimuth_max Input maximum azimuth (degree)
+	@param _azimuth_min Input minimum azimuth (degree)
+	@param _delta_azimuth Input azimuth resolution (degree)
 **/
 void SphericalProjection::setParameters(int _height, int _width,
 										double _elevation_max, double _elevation_min, double _delta_elevation, 

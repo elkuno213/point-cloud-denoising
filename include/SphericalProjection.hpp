@@ -20,22 +20,22 @@ class SphericalProjection {
 
 private:
 	// Inputs
-	std::vector<double> iAzimuths;				// Azimuth data
-	std::vector<double> iDistances;				// Distance data
-	std::vector<double> iIntensities;			// Intensity data
+	std::vector<double> iAzimuths;		// Azimuth data
+	std::vector<double> iDistances;		// Distance data
+	std::vector<double> iIntensities;	// Intensity data
 
 	// Outputs
-	cv::Mat oImage;											// Multi-channel Image (Channels: distance, elevation, azimuth, intensity)
+	cv::Mat oImage;						// Multi-channel Image (Channels: distance, elevation, azimuth, intensity)
 
 	// Parameters
-	int height;												// Image height
-	int width;												// Image width
-	double elevation_max;									// Maximum elevation
-	double elevation_min;									// Minimum elevation
-	double delta_elevation;									// Elevation resolution
-	double azimuth_max;										// Maximum azimuth
-	double azimuth_min;										// Minimum azimuth
-	double delta_azimuth;									// Azimuth resolution
+	int height;							// Image height (pixel)
+	int width;							// Image width (pixel)
+	double elevation_max;				// Maximum elevation (degree)
+	double elevation_min;				// Minimum elevation (degree)
+	double delta_elevation;				// Elevation resolution (degree)
+	double azimuth_max;					// Maximum azimuth (degree)
+	double azimuth_min;					// Minimum azimuth (degree)
+	double delta_azimuth;				// Azimuth resolution (degree)
 
 // Constructors & Destructors
 public:
@@ -48,14 +48,14 @@ public:
 // Public methods
 public:
 	/** @brief Set parameters for object.
-    	@param _height Input image height
-    	@param _width Input image width
-    	@param _elevation_max Input maximum elevation
-    	@param _elevation_min Input minimum elevation
-    	@param _delta_elevation Input elevation resolution
-    	@param _azimuth_max Input maximum azimuth
-    	@param _azimuth_min Input minimum azimuth
-    	@param _delta_azimuth Input azimuth resolution
+    	@param _height Input image height (pixel)
+    	@param _width Input image width (pixel)
+    	@param _elevation_max Input maximum elevation (degree)
+    	@param _elevation_min Input minimum elevation (degree)
+    	@param _delta_elevation Input elevation resolution (degree)
+    	@param _azimuth_max Input maximum azimuth (degree)
+    	@param _azimuth_min Input minimum azimuth (degree)
+    	@param _delta_azimuth Input azimuth resolution (degree)
     **/
 	void setParameters(	int _height, int _width,
 						double _elevation_max, double _elevation_min, double _delta_elevation, 
@@ -83,7 +83,7 @@ public:
 private:
 	/** @brief Angle checking
 	 * 1. If maximum < minimum, then swap maximum and minimum values 
-	 * 2. If maximum - minimum = 360, then these two values are equal and maximum -= resolution.
+	 * 2. If maximum - minimum = 360°, then these two values are equal and maximum -= resolution.
 		@param maximum InputOutput maximum value
 		@param minimum InputOutput minimum value
 		@param resolution Input resolution value
