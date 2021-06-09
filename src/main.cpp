@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     CSVReader azimuthReader;
     std::vector<std::vector<double>> azimuthData;
     azimuthReader.setParameters(0.01, -1, 0);
-    azimuthReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_05s/" + nameLIDAR + "Azimuths.csv");
+    azimuthReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_2min/" + nameLIDAR + "Azimuths.csv");
     azimuthReader.processData();
     azimuthReader.writeOutputs(azimuthData);
     std::cout << "azimuthData:\t(" << azimuthData.size() << " rows, " << azimuthData[0].size() << " cols)" << std::endl;
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
     CSVReader distanceReader;
     std::vector<std::vector<double>> distanceData;
     distanceReader.setParameters(0.004, -1, 0);
-    distanceReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_05s/" + nameLIDAR + "Distances.csv");
+    distanceReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_2min/" + nameLIDAR + "Distances.csv");
     distanceReader.processData();
     distanceReader.writeOutputs(distanceData);
     std::cout << "distanceData:\t(" << distanceData.size() << " rows, " << distanceData[0].size() << " cols)" << std::endl;
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
     CSVReader intensityReader;
     std::vector<std::vector<double>> intensityData;
     intensityReader.setParameters(1, -1, 0);
-    intensityReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_05s/" + nameLIDAR + "Intensities.csv");
+    intensityReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_2min/" + nameLIDAR + "Intensities.csv");
     intensityReader.processData();
     intensityReader.writeOutputs(intensityData);
     std::cout << "intensityData:\t(" << intensityData.size() << " rows, " << intensityData[0].size() << " cols)" << std::endl;
@@ -73,7 +73,11 @@ int main(int argc, char* argv[])
     // Video objects
     cv::VideoWriter videoDistance(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/Distance.avi", 
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
+    cv::VideoWriter videoDenoisedDistance(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/DenoisedDistance.avi", 
+                                    cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
     cv::VideoWriter videoIntensity(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/Intensity.avi", 
+                                    cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
+    cv::VideoWriter videoDenoisedIntensity(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/DenoisedIntensity.avi", 
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
                                 
     // Spherical projection 
@@ -99,22 +103,35 @@ int main(int argc, char* argv[])
         cv::normalize(azimuthImage, azimuthImage, 0.0, 255.0, cv::NORM_MINMAX);
         azimuthImage.convertTo(azimuthImage, CV_8UC1);
         
-        // Distance image
-        cv::Mat distanceImage = channels[2];
-        cv::normalize(distanceImage, distanceImage, 0.0, 255.0, cv::NORM_MINMAX);
-        // cv::subtract(cv::Scalar::all(255.0), distanceImage, distanceImage);
-        distanceImage.convertTo(distanceImage, CV_8UC1);
-        videoDistance.write(distanceImage);
-        cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/distanceImages/distanceImage" + std::to_string(i) + ".png", distanceImage);
+        // // Distance image
+        // cv::Mat distanceImage = channels[2];
+        // cv::normalize(distanceImage, distanceImage, 0.0, 255.0, cv::NORM_MINMAX);
+        // // cv::subtract(cv::Scalar::all(255.0), distanceImage, distanceImage);
+        // distanceImage.convertTo(distanceImage, CV_8UC1);
+        // videoDistance.write(distanceImage);
+        // cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/distanceImages/distanceImage" + std::to_string(i) + ".png", distanceImage);
+
+        // // Denoise distance image
+        // cv::Mat denoisedDistanceImage = distanceImage.clone();
+        // cv::fastNlMeansDenoising(distanceImage, denoisedDistanceImage, strtod(argv[1], NULL), atoi(argv[2]), atoi(argv[3]));
+        // videoDenoisedDistance.write(denoisedDistanceImage);
+        // cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/denoisedDistanceImages/denoisedDistanceImage" + std::to_string(i) + ".png", distanceImage);
 
         // Intensity image
         cv::Mat intensityImage = channels[3];
         intensityImage.convertTo(intensityImage, CV_8UC1);
         videoIntensity.write(intensityImage);
         cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/intensityImages/intensityImage" + std::to_string(i) + ".png", intensityImage);
+    
+        // Denoise intensity image
+        cv::Mat denoisedIntensityImage = intensityImage.clone();
+        cv::fastNlMeansDenoising(intensityImage, denoisedIntensityImage, strtod(argv[1], NULL), atoi(argv[2]), atoi(argv[3]));
+        videoDenoisedIntensity.write(denoisedIntensityImage);
+        cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/denoisedIntensityImages/denoisedIntensityImage" + std::to_string(i) + ".png", intensityImage);
     }
 
     videoDistance.release();
+    videoDenoisedDistance.release();
     videoIntensity.release();
                          
     return 0;

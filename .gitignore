@@ -5,5 +5,7 @@ data/Logs/Log_30s.zip
 data/Logs/Log_05s.zip
 data/Back
 data/Front
+data/test
+data/*.*
 build/
 .vscode/
