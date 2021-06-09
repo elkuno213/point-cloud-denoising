@@ -11,7 +11,6 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-// #include <math.h>
 #include <opencv2/opencv.hpp>
 
 #ifndef _SphericalProjection_H
@@ -79,25 +78,33 @@ public:
     	@param _oImage Input image projected
     **/
 	void writeOutputs(cv::Mat& _oImage);
-
-	/** @brief Project a point into image plane.
-		@param elevation Input elevation value
-		@param azimuth Input azimuth value
-		@param pixel_u Output pixel element u
-		@param pixel_v Output pixel element v
-    **/
-	void pixelProjection(const double elevation, const double azimuth, int* pixel_u, int* pixel_v);
-
-	/** @brief Project a point into image plane.
-		@param elevation Input elevation value
-		@param azimuth Input azimuth value
-		@param pixel_u Output pixel element u
-		@param pixel_v Output pixel element v
-    **/
-	void projectionModel(const double elevation, const double azimuth, int* pixel_u, int* pixel_v);
 	
 // Private methods
 private:
+	/** @brief Angle checking
+	 * 1. If maximum < minimum, then swap maximum and minimum values 
+	 * 2. If maximum - minimum = 360, then these two values are equal and maximum -= resolution.
+		@param maximum InputOutput maximum value
+		@param minimum InputOutput minimum value
+		@param resolution Input resolution value
+    **/
+	void angleChecking(double& maximum, double& minimum, double resolution);
+
+	/** @brief Correct height/width based on their maximum value calculated from angle specification
+		@param size InputOutput size value (height/width)
+		@param maximum Input maximum value
+		@param minimum Input minimum value
+		@param resolution Input resolution value
+    **/
+	void sizeCorrection(int& size, const double maximum, const double minimum, const double resolution);
+
+	/** @brief Project a point into image plane.
+		@param elevation Input elevation value
+		@param azimuth Input azimuth value
+		@param pixel_u Output pixel element u
+		@param pixel_v Output pixel element v
+    **/
+	void normalize(const double elevation, const double azimuth, int* pixel_u, int* pixel_v);
 
 };
 

@@ -73,13 +73,13 @@ void SphericalProjection::readInputs(	std::vector<double>& _iAzimuths,
 	@param _oImage Input image projected
 **/
 void SphericalProjection::processData() {
+	// Check angles
+	angleChecking(this->elevation_max, this->elevation_min, this->delta_elevation);
+	angleChecking(this->azimuth_max, this->azimuth_min, this->delta_azimuth);
+
 	// Correct image size
-	int max_height = int((this->elevation_max - this->elevation_min) / this->delta_elevation) + 1;
-	if (this->height > max_height || this->height < 0)
-		this->height = max_height;
-	int max_width = int((this->azimuth_max - this->azimuth_min) / this->delta_azimuth);
-	if (this->width > max_width || this->width < 0)
-		this->width = max_width;
+	sizeCorrection(this->height, this->elevation_max, this->elevation_min, this->delta_elevation);
+	sizeCorrection(this->width, this->azimuth_max, this->azimuth_min, this->delta_azimuth);
 
 	// Make image
 	this->oImage = cv::Mat(this->height, this->width, CV_64FC(4), cv::Scalar::all(0));
@@ -87,8 +87,7 @@ void SphericalProjection::processData() {
 		double elevation = this->elevation_max;		// elevation angle in degree
 		for (int j {0}; j < this->height; ++j) {
 			int pixel_u = 0, pixel_v = 0;
-			pixelProjection(elevation, this->iAzimuths[i], &pixel_u, &pixel_v);
-			// projectionModel(elevation, this->iAzimuths[i], &pixel_u, &pixel_v);
+			normalize(elevation, this->iAzimuths[i], &pixel_u, &pixel_v);
 			this->oImage.at<cv::Vec4d>(pixel_u, pixel_v) = cv::Vec4d{elevation, this->iAzimuths[i], 
 																	 this->iDistances[this->height * i + j], 
 																	 this->iIntensities[this->height * i + j]};
@@ -105,46 +104,49 @@ void SphericalProjection::writeOutputs(cv::Mat& _oImage) {
 	_oImage = this->oImage.clone();
 }
 
-/** @brief Project a point into image plane.
-	@param elevation Input elevation value
-	@param azimuth Input azimuth value
-	@param pixel_u Output pixel element u
-	@param pixel_v Output pixel element v
-**/
-void SphericalProjection::pixelProjection(const double elevation, const double azimuth, int* pixel_u, int* pixel_v) {
-	// Calculate pixel u and make sure that it is in the range [0, this->height - 1]
-	int u = round((elevation - this->elevation_min) * (this->height - 1) / (this->elevation_max - this->elevation_min));
-	u = std::min(this->height - 1, u);
-	u = std::max(0, u);
-	*pixel_u = int(u);
-
-	// Calculate pixel v and make sure that it is in the range [0, this->width - 1]
-	int v = round((azimuth - this->azimuth_min) * (this->width - 1) / (this->azimuth_max - this->azimuth_min));
-	v = std::min(this->width - 1, v);
-	v = std::max(0, v);
-	*pixel_v = int(v);
-}
-
-/** @brief Project a point into image plane.
-	@param elevation Input elevation value
-	@param azimuth Input azimuth value
-	@param pixel_u Output pixel element u
-	@param pixel_v Output pixel element v
-**/
-void SphericalProjection::projectionModel(const double elevation, const double azimuth, int* pixel_u, int* pixel_v) {
-	// Calculate pixel u and make sure that it is in the range [0, this->height - 1]
-	int u = tan(elevation) * cos(azimuth) * this->height;
-	u = std::min(this->height - 1, u);
-	u = std::max(0, u);
-	*pixel_u = int(u);
-
-	// Calculate pixel v and make sure that it is in the range [0, this->width - 1]
-	int v = tan(elevation) * sin(azimuth) * this->width;
-	v = std::min(this->width - 1, v);
-	v = std::max(0, v);
-	*pixel_v = int(v);
-}
-
 /******************************************************************************************************************************************************
 PRIVATE METHODS
 ******************************************************************************************************************************************************/
+/** @brief Angle checking
+ * 1. If maximum < minimum, then swap maximum and minimum values 
+ * 2. If maximum - minimum = 360°, then these two values are equal and maximum -= resolution.
+	@param maximum InputOutput maximum value
+	@param minimum InputOutput minimum value
+	@param resolution Input resolution value
+**/
+void SphericalProjection::angleChecking(double& maximum, double& minimum, const double resolution) {
+    if (maximum < minimum)
+        std::swap(maximum, minimum);
+	maximum = (maximum - minimum == 360.0 ? maximum - resolution : maximum);
+}
+
+/** @brief Correct height/width based on their maximum value calculated from angle specification
+	@param size InputOutput size value (height/width)
+	@param maximum Input maximum value
+	@param minimum Input minimum value
+	@param resolution Input resolution value
+**/
+void SphericalProjection::sizeCorrection(int& size, const double maximum, const double minimum, const double resolution) {
+	int max_size = int((maximum - minimum) / resolution) + 1;
+	size = size > max_size || size < 0 ? max_size : size;
+}
+
+/** @brief Project a point into image plane.
+	@param elevation Input elevation value
+	@param azimuth Input azimuth value
+	@param pixel_u Output pixel element u
+	@param pixel_v Output pixel element v
+**/
+void SphericalProjection::normalize(const double elevation, const double azimuth, int* pixel_u, int* pixel_v) {
+	// Calculate pixel u and make sure that it is in the range [0, this->height - 1]
+	int u = round((elevation - this->elevation_min) / (this->elevation_max - this->elevation_min) * (this->height - 1));
+	u = std::min(this->height - 1, u);
+	u = std::max(0, u);
+	*pixel_u = int(u);
+
+	// Calculate pixel v and make sure that it is in the range [0, this->width - 1]
+	int v = round((azimuth - this->azimuth_min) / (this->azimuth_max - this->azimuth_min) * (this->width - 1));
+	v = std::min(this->width - 1, v);
+	v = std::max(0, v);
+	*pixel_v = int(v);
+}
