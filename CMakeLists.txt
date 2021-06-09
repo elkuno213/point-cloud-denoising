@@ -48,6 +48,9 @@ target_link_libraries(CSVReader)
 add_executable(main src/main.cpp)
 target_link_libraries(main ${OpenCV_LIBS} SphericalProjection CSVReader)
 
+add_executable(denoising src/denoising.cpp)
+target_link_libraries(denoising ${OpenCV_LIBS})
+
 # Include header files
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/include
