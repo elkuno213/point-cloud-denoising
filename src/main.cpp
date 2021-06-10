@@ -3,6 +3,7 @@
 #include "rapidcsv.h"
 #include "CSVReader.hpp"
 #include "SphericalProjection.hpp"
+#include "ImageDenoising.hpp"
 #include <opencv2/opencv.hpp>
 
 void displayMinMaxLoc(cv::Mat& image)
@@ -40,14 +41,14 @@ int main(int argc, char* argv[])
 	double azimuth_max 		= 360.0;	// degree
 	double azimuth_min 		= 0.0;		// degree
 	double delta_azimuth 	= 0.18;		// degree
-    std::string nameLIDAR = "Front";
+    std::string nameLIDAR = argv[1];
     std::string nameCase = std::to_string(delta_azimuth).substr(0, 4) + "_" + std::to_string(height) + "x" + std::to_string(width);
 
     // Azimuth reading
     CSVReader azimuthReader;
     std::vector<std::vector<double>> azimuthData;
     azimuthReader.setParameters(0.01, -1, 0);
-    azimuthReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_2min/" + nameLIDAR + "Azimuths.csv");
+    azimuthReader.readInputs("/home/hvh/MyGit/PointCloud_Denoising/data/Logs/Log_05s/" + nameLIDAR + "Azimuths.csv");
     azimuthReader.processData();
     azimuthReader.writeOutputs(azimuthData);
     std::cout << "azimuthData:\t(" << azimuthData.size() << " rows, " << azimuthData[0].size() << " cols)" << std::endl;
@@ -56,7 +57,7 @@ int main(int argc, char* argv[])
     CSVReader distanceReader;
     std::vector<std::vector<double>> distanceData;
     distanceReader.setParameters(0.004, -1, 0);
-    distanceReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_2min/" + nameLIDAR + "Distances.csv");
+    distanceReader.readInputs("/home/hvh/MyGit/PointCloud_Denoising/data/Logs/Log_05s/" + nameLIDAR + "Distances.csv");
     distanceReader.processData();
     distanceReader.writeOutputs(distanceData);
     std::cout << "distanceData:\t(" << distanceData.size() << " rows, " << distanceData[0].size() << " cols)" << std::endl;
@@ -65,19 +66,19 @@ int main(int argc, char* argv[])
     CSVReader intensityReader;
     std::vector<std::vector<double>> intensityData;
     intensityReader.setParameters(1, -1, 0);
-    intensityReader.readInputs("/home/hvh/MyGit/SphericalProjection/data/Logs/Log_2min/" + nameLIDAR + "Intensities.csv");
+    intensityReader.readInputs("/home/hvh/MyGit/PointCloud_Denoising/data/Logs/Log_05s/" + nameLIDAR + "Intensities.csv");
     intensityReader.processData();
     intensityReader.writeOutputs(intensityData);
     std::cout << "intensityData:\t(" << intensityData.size() << " rows, " << intensityData[0].size() << " cols)" << std::endl;
 
     // Video objects
-    cv::VideoWriter videoDistance(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/Distance.avi", 
+    cv::VideoWriter videoDistance(  "/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/Distance.avi", 
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
-    cv::VideoWriter videoDenoisedDistance(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/DenoisedDistance.avi", 
+    cv::VideoWriter videoDenoisedDistance(  "/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/DenoisedDistance.avi", 
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
-    cv::VideoWriter videoIntensity(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/Intensity.avi", 
+    cv::VideoWriter videoIntensity(  "/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/Intensity.avi", 
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
-    cv::VideoWriter videoDenoisedIntensity(  "/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/DenoisedIntensity.avi", 
+    cv::VideoWriter videoDenoisedIntensity(  "/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/DenoisedIntensity.avi", 
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
                                 
     // Spherical projection 
@@ -103,31 +104,43 @@ int main(int argc, char* argv[])
         cv::normalize(azimuthImage, azimuthImage, 0.0, 255.0, cv::NORM_MINMAX);
         azimuthImage.convertTo(azimuthImage, CV_8UC1);
         
-        // // Distance image
-        // cv::Mat distanceImage = channels[2];
-        // cv::normalize(distanceImage, distanceImage, 0.0, 255.0, cv::NORM_MINMAX);
-        // // cv::subtract(cv::Scalar::all(255.0), distanceImage, distanceImage);
-        // distanceImage.convertTo(distanceImage, CV_8UC1);
-        // videoDistance.write(distanceImage);
-        // cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/distanceImages/distanceImage" + std::to_string(i) + ".png", distanceImage);
+        // Distance image
+        cv::Mat distanceImage = channels[2];
+        cv::normalize(distanceImage, distanceImage, 0.0, 255.0, cv::NORM_MINMAX);
+        // cv::subtract(cv::Scalar::all(255.0), distanceImage, distanceImage);
+        distanceImage.convertTo(distanceImage, CV_8UC1);
+        videoDistance.write(distanceImage);
+        cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/distanceImages/distanceImage" + std::to_string(i) + ".png", distanceImage);
 
-        // // Denoise distance image
-        // cv::Mat denoisedDistanceImage = distanceImage.clone();
-        // cv::fastNlMeansDenoising(distanceImage, denoisedDistanceImage, strtod(argv[1], NULL), atoi(argv[2]), atoi(argv[3]));
-        // videoDenoisedDistance.write(denoisedDistanceImage);
-        // cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/denoisedDistanceImages/denoisedDistanceImage" + std::to_string(i) + ".png", distanceImage);
+        // Denoise distance image
+        cv::Mat denoisedDistanceImage, distanceNoise;
+        double distanceNoiseRatio;
+        ImageDenoising idDistance;
+        idDistance.setParameters(3, 7, 21);
+        idDistance.readInputs(distanceImage);
+        idDistance.processData();
+        idDistance.writeOutputs(denoisedDistanceImage, distanceNoise, distanceNoiseRatio);
+        std::cout << "distanceNoiseRatio:\t" << distanceNoiseRatio << std::endl;
+        videoDenoisedDistance.write(denoisedDistanceImage);
+        cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/denoisedDistanceImages/denoisedDistanceImage" + std::to_string(i) + ".png", denoisedDistanceImage);
 
         // Intensity image
         cv::Mat intensityImage = channels[3];
         intensityImage.convertTo(intensityImage, CV_8UC1);
         videoIntensity.write(intensityImage);
-        cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/intensityImages/intensityImage" + std::to_string(i) + ".png", intensityImage);
+        cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/intensityImages/intensityImage" + std::to_string(i) + ".png", intensityImage);
     
         // Denoise intensity image
-        cv::Mat denoisedIntensityImage = intensityImage.clone();
-        cv::fastNlMeansDenoising(intensityImage, denoisedIntensityImage, strtod(argv[1], NULL), atoi(argv[2]), atoi(argv[3]));
+        cv::Mat denoisedIntensityImage, intensityNoise;
+        double intensityNoiseRatio;
+        ImageDenoising idIntensity;
+        idIntensity.setParameters(10, 7, 21);
+        idIntensity.readInputs(intensityImage);
+        idIntensity.processData();
+        idIntensity.writeOutputs(denoisedIntensityImage, intensityNoise, intensityNoiseRatio);
+        std::cout << "intensityNoiseRatio:\t" << intensityNoiseRatio << std::endl;
         videoDenoisedIntensity.write(denoisedIntensityImage);
-        cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/" + nameLIDAR + "/" + nameCase + "/denoisedIntensityImages/denoisedIntensityImage" + std::to_string(i) + ".png", intensityImage);
+        cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/denoisedIntensityImages/denoisedIntensityImage" + std::to_string(i) + ".png", denoisedIntensityImage);
     }
 
     videoDistance.release();

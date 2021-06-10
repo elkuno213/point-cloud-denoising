@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <opencv2/opencv.hpp>
+#include "ImageDenoising.hpp"
 
 cv::Mat addNoise(cv::Mat image, double mean = 0.0, double stdDev = 1.0) {
     cv::Mat noise = cv::Mat(image.size(), image.depth());
@@ -17,7 +18,7 @@ int main(int argc, char* argv[])
 
     // // Create a VideoCapture object and open the input file
     // // If the input is the web camera, pass 0 instead of the video file name
-    // cv::VideoCapture cap("/home/hvh/MyGit/SphericalProjection/data/test.avi"); 
+    // cv::VideoCapture cap("/home/hvh/MyGit/PointCloud_Denoising/data/test.avi"); 
 
     // // Check if camera opened successfully
     // if (!cap.isOpened()) {
@@ -55,22 +56,29 @@ int main(int argc, char* argv[])
     // // Denoise
     // cv::Mat denoisedImage;
     // cv::fastNlMeansDenoisingMulti(data, denoisedImage, atoi(argv[1]), atoi(argv[2]), strtod(argv[3], NULL), atoi(argv[4]), atoi(argv[5]));
-    // cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/denoiseTest2.png", denoisedImage);
+    // cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/denoiseTest2.png", denoisedImage);
     // ----------------------------------------------------------------------------------------------------------
 
 
 
     // ----------------------------------------------------------------------------------------------------------
-    cv::Mat image = cv::imread("/home/hvh/MyGit/SphericalProjection/data/test/intensityImage" + std::to_string(atoi(argv[4])) + ".png", cv::IMREAD_GRAYSCALE);
-    cv::Mat denoisedImage = image.clone();
-    cv::fastNlMeansDenoising(image, denoisedImage, strtod(argv[1], NULL), atoi(argv[2]), atoi(argv[3]));
-    cv::imwrite("/home/hvh/MyGit/SphericalProjection/data/denoiseTest1.png", denoisedImage);
+    cv::Mat image = cv::imread("/home/hvh/MyGit/PointCloud_Denoising/data/test/intensityImage" + std::to_string(atoi(argv[4])) + ".png", cv::IMREAD_GRAYSCALE);
+    cv::Mat denoisedImage, noise;
+    double noiseRatio;
+    ImageDenoising id;
+    id.setParameters(strtod(argv[1], NULL), atoi(argv[2]), atoi(argv[3]));
+    id.readInputs(image);
+    id.processData();
+    id.writeOutputs(denoisedImage, noise, noiseRatio);
+    cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/denoisedImage.png", denoisedImage);
+    cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/noise.png", noise);
+    std::cout << "noiseRatio:\t" << noiseRatio << std::endl;
     // ----------------------------------------------------------------------------------------------------------
 
 
 
     // ----------------------------------------------------------------------------------------------------------
-    // cv::Mat image = cv::imread("/home/hvh/MyGit/SphericalProjection/data/image.jpg", cv::IMREAD_GRAYSCALE);
+    // cv::Mat image = cv::imread("/home/hvh/MyGit/PointCloud_Denoising/data/image.jpg", cv::IMREAD_GRAYSCALE);
     // cv::namedWindow("image", cv::WINDOW_GUI_EXPANDED);
     // cv::resizeWindow("image", cv::Size(500, 500));
     // cv::moveWindow("image", 100, 100);
@@ -82,8 +90,8 @@ int main(int argc, char* argv[])
     // cv::moveWindow("noisy image", 700, 100);
     // cv::imshow("noisy image", noisyImage);
 
-    // cv::Mat denoisedImage = noisyImage.clone();
-    // cv::fastNlMeansDenoising(image, denoisedImage);
+    // cv::Mat denoisedImage;
+    // cv::fastNlMeansDenoising(noisyImage, denoisedImage, 10, 7, 21);
     // cv::namedWindow("denoised image", cv::WINDOW_GUI_EXPANDED);
     // cv::resizeWindow("denoised image", cv::Size(500, 500));
     // cv::moveWindow("denoised image", 1300, 100);

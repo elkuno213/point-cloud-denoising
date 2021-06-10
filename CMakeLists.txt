@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(SphericalProjection VERSION 1.0.0)
+project(PointCloud_Denoising VERSION 1.0.0)
 
 
 # ==============
@@ -42,14 +42,17 @@ find_package(OpenCV REQUIRED PATHS /home/hvh/Libraries/OpenCV_4_5_2/install_with
 add_library(SphericalProjection src/SphericalProjection.cpp)
 target_link_libraries(SphericalProjection ${OpenCV_LIBS})
 
+add_library(ImageDenoising src/ImageDenoising.cpp)
+target_link_libraries(ImageDenoising ${OpenCV_LIBS})
+
 add_library(CSVReader src/CSVReader.cpp)
 target_link_libraries(CSVReader)
 
 add_executable(main src/main.cpp)
-target_link_libraries(main ${OpenCV_LIBS} SphericalProjection CSVReader)
+target_link_libraries(main ${OpenCV_LIBS} SphericalProjection CSVReader ImageDenoising)
 
 add_executable(denoising src/denoising.cpp)
-target_link_libraries(denoising ${OpenCV_LIBS})
+target_link_libraries(denoising ${OpenCV_LIBS} ImageDenoising)
 
 # Include header files
 include_directories(

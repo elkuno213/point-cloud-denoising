@@ -2,68 +2,69 @@
  * @name TEMPLATE FOR AUTONOMOUS DRIVING COMPONENTS
  * @copyright Gaussin Manugistique S.A. (c)
  * @author Vu-Hoi HUYNH
- * @brief CSV reader class
+ * @brief Image denoising class
  * @version 1.0
  * @date 02/06/2021
  * @comment 
  */
 
-#include "CSVReader.hpp"
+#include "ImageDenoising.hpp"
 
 /******************************************************************************************************************************************************
 CONSTRUCTORS & DESTRUCTORS
 ******************************************************************************************************************************************************/
 // Constructor
-CSVReader::CSVReader() {
-	this->unit 				= 1.0;
-	this->columnNameIdx 	= -1;
-	this->rowNameIdx 		= 0;
+ImageDenoising::ImageDenoising() {
+	this->h 					= 10.0;
+	this->templateWindowSize	= 7;
+	this->searchWindowSize 		= 21;
 }
 
 // Destructor
-CSVReader::~CSVReader() {
+ImageDenoising::~ImageDenoising() {
 }
 
 /******************************************************************************************************************************************************
 PUBLIC METHODS
 ******************************************************************************************************************************************************/
 /** @brief Set parameters for object.
-	@param _unit Unit coefficient to scale data
-	@param _columnNameIdx Zero-based row index of the column labels (-1 gives access to all rows as document data)
-	@param _rowNameIdx Zero-based column index of the row labels (-1 gives access to all columns as document data)
+	@param 
 **/
-void CSVReader::setParameters(double _unit, int _columnNameIdx, int _rowNameIdx) {
-	this->unit 				= _unit;
-	this->columnNameIdx 	= _columnNameIdx;
-	this->rowNameIdx 		= _rowNameIdx;
+void ImageDenoising::setParameters(float _h, int _templateWindowSize, int _searchWindowSize) {
+	this->h 					= _h;
+	this->templateWindowSize	= _templateWindowSize;
+	this->searchWindowSize 		= _searchWindowSize;
 }
-
 /** @brief Read input for object.
-	@param _iPath Input path to data file
+	@param 
 **/
-void CSVReader::readInputs(const std::string _iPath) {
+void ImageDenoising::readInputs(cv::Mat& _iNoisyImage) {
 	// Receives the inputs from the MAPS wrapper and saves them on the class
-	this->iPath 		= _iPath;
+	this->iNoisyImage 		= _iNoisyImage;
 }
 
 /** @brief Process data for object.
 **/
-void CSVReader::processData() {
-	rapidcsv::Document CSVDoc(this->iPath, rapidcsv::LabelParams(this->columnNameIdx, this->rowNameIdx), rapidcsv::SeparatorParams(';'));
-	for (auto i {0}; i < CSVDoc.GetRowCount(); ++i) {
-		std::vector<double> row = CSVDoc.GetRow<double>(i);
-		if (this->unit != 1.0)
-			std::transform(row.begin(), row.end(), row.begin(), [this](double& element){ return element * unit; });
-		this->oData.push_back(row);
-    }
+void ImageDenoising::processData() {
+	// Denoising
+	this->oDenoisedImage = cv::Mat(this->iNoisyImage.size(), this->iNoisyImage.depth(), cv::Scalar::all(0));
+	cv::fastNlMeansDenoising(this->iNoisyImage, this->oDenoisedImage, this->h, this->templateWindowSize, this->searchWindowSize);
+
+	// Noise extraction
+	this->oNoise = this->iNoisyImage - this->oDenoisedImage;
+
+	// Noise ratio
+	this->oNoiseRatio = double(cv::countNonZero(this->oNoise)) / double(this->oNoise.rows * this->oNoise.cols);
 }
 
 /** @brief Write out the processed data.
-	@param _oData Input processed data
+	@param 
 **/
-void CSVReader::writeOutputs(std::vector<std::vector<double>>& _oData) {
+void ImageDenoising::writeOutputs(cv::Mat& _oDenoisedImage, cv::Mat& _oNoise, double& _oNoiseRatio) {
 	// Pass the values of scores to the MAPS wrapper
-	_oData = this->oData;
+	_oDenoisedImage = this->oDenoisedImage.clone();
+	_oNoise = this->oNoise.clone();
+	_oNoiseRatio = this->oNoiseRatio;
 }
 
 /******************************************************************************************************************************************************
