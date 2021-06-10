@@ -1,4 +1,4 @@
-# Spherical projection
+# PointCloud Denoising
 
 Spherical projection of LIDAR PointCloud to image.
 
