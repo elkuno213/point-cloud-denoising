@@ -29,7 +29,17 @@ ImageDenoising::~ImageDenoising() {
 PUBLIC METHODS
 ******************************************************************************************************************************************************/
 /** @brief Set parameters for object.
-	@param 
+	@param _h Parameter regulating filter strength.
+	Big h value perfectly removes noise but also removes image details.
+	Smaller h value preserves details but also preserves some noise.
+	@param _templateWindowSize Size in pixels of the template patch that is used to compute weights.
+	Should be odd. Recommended value 7 pixels.
+	@param _searchWindowSize Size in pixels of the window that is used to compute weighted average for given pixel.
+	Should be odd. Recommended value 21 pixels.
+	Affect performance linearly: greater searchWindowsSize - greater denoising time.
+	@param _nonNoiseLevel Percentage of non nosie pixel.
+	For example, with a noise image of [0.0; 255.0], a nonNoiseLevel of 0.1 (10%) means that all pixels less than 
+	10% * 255.0 are thresholded to 0.0 and considered as non noise ones.
 **/
 void ImageDenoising::setParameters(float _h, int _templateWindowSize, int _searchWindowSize, double _nonNoiseLevel) {
 	this->h 					= _h;
@@ -37,8 +47,9 @@ void ImageDenoising::setParameters(float _h, int _templateWindowSize, int _searc
 	this->searchWindowSize 		= _searchWindowSize;
 	this->nonNoiseLevel 		= _nonNoiseLevel;
 }
-/** @brief Read input for object.
-	@param 
+
+/** @brief Read inputs for object.
+	@param _iNoisyImage Noisy image
 **/
 void ImageDenoising::readInputs(cv::Mat& _iNoisyImage) {
 	// Receives the inputs from the MAPS wrapper and saves them on the class
@@ -67,7 +78,9 @@ void ImageDenoising::processData() {
 }
 
 /** @brief Write out the processed data.
-	@param 
+	@param _oDenoisedImage Image denoised
+	@param _oNoise Noise
+	@param _oNoiseRatio Noise ratio
 **/
 void ImageDenoising::writeOutputs(cv::Mat& _oDenoisedImage, cv::Mat& _oNoise, double& _oNoiseRatio) {
 	// Pass the values of scores to the MAPS wrapper
@@ -79,8 +92,10 @@ void ImageDenoising::writeOutputs(cv::Mat& _oDenoisedImage, cv::Mat& _oNoise, do
 /******************************************************************************************************************************************************
 PRIVATE METHODS
 ******************************************************************************************************************************************************/
-/** @brief Get min and max limits of an image, depending its type.
-	@param 
+/** @brief Get min and max limits of an image, based on its type.
+	@param image Input image
+	@param image Output minLimit
+	@param image Output maxLimit
 **/
 template<typename T>
 void ImageDenoising::getMinMaxLim(const cv::Mat image, T& minLim, T& maxLim) {

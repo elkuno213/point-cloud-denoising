@@ -48,23 +48,23 @@ public:
 // Public methods
 public:
 	/** @brief Set parameters for object.
-    	@param _height Input image height (pixel)
-    	@param _width Input image width (pixel)
-    	@param _elevation_max Input maximum elevation (degree)
-    	@param _elevation_min Input minimum elevation (degree)
-    	@param _delta_elevation Input elevation resolution (degree)
-    	@param _azimuth_max Input maximum azimuth (degree)
-    	@param _azimuth_min Input minimum azimuth (degree)
-    	@param _delta_azimuth Input azimuth resolution (degree)
+    	@param _height Image height (pixel)
+    	@param _width Image width (pixel)
+    	@param _elevation_max Maximum elevation (degree)
+    	@param _elevation_min Minimum elevation (degree)
+    	@param _delta_elevation Elevation resolution (degree)
+    	@param _azimuth_max Maximum azimuth (degree)
+    	@param _azimuth_min Minimum azimuth (degree)
+    	@param _delta_azimuth Azimuth resolution (degree)
     **/
 	void setParameters(	int _height, int _width,
 						double _elevation_max, double _elevation_min, double _delta_elevation, 
 						double _azimuth_max, double _azimuth_min, double _delta_azimuth);
 
-	/** @brief Read input for object.
-		@param _iAzimuths Input azimuth data
-		@param _iDistances Input distance data
-		@param _iIntensities Input intensity data
+	/** @brief Read inputs for object.
+		@param _iAzimuths Azimuth data
+		@param _iDistances Distance data
+		@param _iIntensities Intensity data
     **/
 	void readInputs(std::vector<double>& _iAzimuths,
 					std::vector<double>& _iDistances,
@@ -75,7 +75,7 @@ public:
 	void processData();
 
 	/** @brief Write out the processed data.
-    	@param _oImage Input image projected
+    	@param _oImage Image projected
     **/
 	void writeOutputs(cv::Mat& _oImage);
 	
