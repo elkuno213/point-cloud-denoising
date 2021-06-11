@@ -62,11 +62,12 @@ int main(int argc, char* argv[])
 
 
     // ----------------------------------------------------------------------------------------------------------
-    cv::Mat image = cv::imread("/home/hvh/MyGit/PointCloud_Denoising/data/test/intensityImage" + std::to_string(atoi(argv[4])) + ".png", cv::IMREAD_GRAYSCALE);
+    cv::Mat image = cv::imread("/home/hvh/MyGit/PointCloud_Denoising/data/test/intensityImage" + std::to_string(atoi(argv[5])) + ".png", cv::IMREAD_GRAYSCALE);
+    image.convertTo(image, CV_64F);
     cv::Mat denoisedImage, noise;
     double noiseRatio;
     ImageDenoising id;
-    id.setParameters(strtod(argv[1], NULL), atoi(argv[2]), atoi(argv[3]));
+    id.setParameters(strtod(argv[1], NULL), atoi(argv[2]), atoi(argv[3]), strtod(argv[4], NULL));
     id.readInputs(image);
     id.processData();
     id.writeOutputs(denoisedImage, noise, noiseRatio);

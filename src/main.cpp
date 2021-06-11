@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     CSVReader azimuthReader;
     std::vector<std::vector<double>> azimuthData;
     azimuthReader.setParameters(0.01, -1, 0);
-    azimuthReader.readInputs("/home/hvh/MyGit/PointCloud_Denoising/data/Logs/Log_05s/" + nameLIDAR + "Azimuths.csv");
+    azimuthReader.readInputs("/home/hvh/MyGit/PointCloud_Denoising/data/Logs/Log_2min/" + nameLIDAR + "Azimuths.csv");
     azimuthReader.processData();
     azimuthReader.writeOutputs(azimuthData);
     std::cout << "azimuthData:\t(" << azimuthData.size() << " rows, " << azimuthData[0].size() << " cols)" << std::endl;
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     CSVReader distanceReader;
     std::vector<std::vector<double>> distanceData;
     distanceReader.setParameters(0.004, -1, 0);
-    distanceReader.readInputs("/home/hvh/MyGit/PointCloud_Denoising/data/Logs/Log_05s/" + nameLIDAR + "Distances.csv");
+    distanceReader.readInputs("/home/hvh/MyGit/PointCloud_Denoising/data/Logs/Log_2min/" + nameLIDAR + "Distances.csv");
     distanceReader.processData();
     distanceReader.writeOutputs(distanceData);
     std::cout << "distanceData:\t(" << distanceData.size() << " rows, " << distanceData[0].size() << " cols)" << std::endl;
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
     CSVReader intensityReader;
     std::vector<std::vector<double>> intensityData;
     intensityReader.setParameters(1, -1, 0);
-    intensityReader.readInputs("/home/hvh/MyGit/PointCloud_Denoising/data/Logs/Log_05s/" + nameLIDAR + "Intensities.csv");
+    intensityReader.readInputs("/home/hvh/MyGit/PointCloud_Denoising/data/Logs/Log_2min/" + nameLIDAR + "Intensities.csv");
     intensityReader.processData();
     intensityReader.writeOutputs(intensityData);
     std::cout << "intensityData:\t(" << intensityData.size() << " rows, " << intensityData[0].size() << " cols)" << std::endl;
@@ -116,13 +116,14 @@ int main(int argc, char* argv[])
         cv::Mat denoisedDistanceImage, distanceNoise;
         double distanceNoiseRatio;
         ImageDenoising idDistance;
-        idDistance.setParameters(3, 7, 21);
+        idDistance.setParameters(3, 7, 21, 0.03);
         idDistance.readInputs(distanceImage);
         idDistance.processData();
         idDistance.writeOutputs(denoisedDistanceImage, distanceNoise, distanceNoiseRatio);
-        std::cout << "distanceNoiseRatio:\t" << distanceNoiseRatio << std::endl;
+        // std::cout << "distanceNoiseRatio:\t" << distanceNoiseRatio << std::endl;
         videoDenoisedDistance.write(denoisedDistanceImage);
         cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/denoisedDistanceImages/denoisedDistanceImage" + std::to_string(i) + ".png", denoisedDistanceImage);
+        cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/distanceNoises/distanceNoise" + std::to_string(i) + ".png", distanceNoise);
 
         // Intensity image
         cv::Mat intensityImage = channels[3];
@@ -134,18 +135,20 @@ int main(int argc, char* argv[])
         cv::Mat denoisedIntensityImage, intensityNoise;
         double intensityNoiseRatio;
         ImageDenoising idIntensity;
-        idIntensity.setParameters(10, 7, 21);
+        idIntensity.setParameters(10, 7, 21, 0.03);
         idIntensity.readInputs(intensityImage);
         idIntensity.processData();
         idIntensity.writeOutputs(denoisedIntensityImage, intensityNoise, intensityNoiseRatio);
-        std::cout << "intensityNoiseRatio:\t" << intensityNoiseRatio << std::endl;
+        // std::cout << "intensityNoiseRatio:\t" << intensityNoiseRatio << std::endl;
         videoDenoisedIntensity.write(denoisedIntensityImage);
         cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/denoisedIntensityImages/denoisedIntensityImage" + std::to_string(i) + ".png", denoisedIntensityImage);
+        cv::imwrite("/home/hvh/MyGit/PointCloud_Denoising/data/" + nameLIDAR + "/" + nameCase + "/intensityNoises/intensityNoise" + std::to_string(i) + ".png", intensityNoise);
     }
 
     videoDistance.release();
     videoDenoisedDistance.release();
     videoIntensity.release();
+    videoDenoisedIntensity.release();
                          
     return 0;
 }
