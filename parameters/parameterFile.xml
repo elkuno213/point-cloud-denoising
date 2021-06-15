@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <EntryOfFile>
-  <LogName>Log_05s</LogName> <!-- Log_05s, Log_30s, Log_2min -->
+  <LogName>Log_2min</LogName> <!-- Log_05s, Log_30s, Log_2min -->
   <LIDARName>Front</LIDARName> <!-- Front, Back -->
 
   <height>32</height> <!-- Image height (default: 32 pixels) -->

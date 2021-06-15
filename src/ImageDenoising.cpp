@@ -73,8 +73,7 @@ void ImageDenoising::processData() {
 	getMinMaxLim(this->iNoisyImage, minLim, maxLim);
 	cv::threshold(this->oNoise, this->oNoise, this->nonNoiseLevel * (maxLim - minLim) + minLim, maxLim, cv::THRESH_TOZERO);
 
-	// Noise ratio
-	this->oNoiseRatio = double(cv::countNonZero(this->oNoise)) / double(this->oNoise.rows * this->oNoise.cols);
+	this->oNoiseRatio = double(cv::countNonZero(this->oNoise)) / double(this->oNoise.rows * this->oNoise.cols); // Noise ratio
 }
 
 /** @brief Write out the processed data.
