@@ -5,6 +5,7 @@
 #include "CSVReader.hpp"
 #include "SphericalProjection.hpp"
 #include "ImageDenoising.hpp"
+#include "tinyxml2.h"
 #include <opencv2/opencv.hpp>
 
 void createDir(std::string dirPath);
@@ -21,23 +22,52 @@ void display2DVector(std::vector<std::vector<T>> vector);
 int main(int argc, char* argv[])
 {
     // Parameters
-	int height 			    = 32;		// pixel
-	int width 			    = 500;		// pixel
-	double elevation_max 	= 15.0;		// degree
-	double elevation_min 	= -16.0;	// degree
-	double delta_elevation 	= 1.0;		// degree
-	double azimuth_max 		= 360.0;	// degree
-	double azimuth_min 		= 0.0;		// degree
-	double delta_azimuth 	= 0.18;		// degree
+    tinyxml2::XMLDocument doc;
+    tinyxml2::XMLError result = doc.LoadFile(argv[1]);
+    if (result != tinyxml2::XML_SUCCESS) 
+        return false;
 
-    // Input paths
-    // argv[1]: Log name (Log_05s, Log_30s, Log_2min)
-    // argv[2]: LIDAR name (Back, Front)
-    std::string dataPath = "/home/hvh/MyGit/PointCloud_Denoising/data/Logs/" + std::string(argv[1]) + "/" + std::string(argv[2]);
+    std::string LogName = doc.FirstChildElement("EntryOfFile")->FirstChildElement("LogName")->GetText();
+    std::string LIDARName = doc.FirstChildElement("EntryOfFile")->FirstChildElement("LIDARName")->GetText();
 
-    // Output paths
+    tinyxml2::XMLElement* eHeight = doc.FirstChildElement("EntryOfFile")->FirstChildElement("height");
+    int height;
+    eHeight->QueryIntText(&height);
+
+    tinyxml2::XMLElement* eWidth = doc.FirstChildElement("EntryOfFile")->FirstChildElement("width");
+    int width;
+    eWidth->QueryIntText(&width);
+
+    tinyxml2::XMLElement* eElevation_max = doc.FirstChildElement("EntryOfFile")->FirstChildElement("elevation_max");
+    double elevation_max;
+    eElevation_max->QueryDoubleText(&elevation_max);
+
+    tinyxml2::XMLElement* eElevation_min = doc.FirstChildElement("EntryOfFile")->FirstChildElement("elevation_min");
+    double elevation_min;
+    eElevation_min->QueryDoubleText(&elevation_min);
+
+    tinyxml2::XMLElement* eDelta_elevation = doc.FirstChildElement("EntryOfFile")->FirstChildElement("delta_elevation");
+    double delta_elevation;
+    eDelta_elevation->QueryDoubleText(&delta_elevation);
+
+    tinyxml2::XMLElement* eAzimuth_max = doc.FirstChildElement("EntryOfFile")->FirstChildElement("azimuth_max");
+    double azimuth_max;
+    eAzimuth_max->QueryDoubleText(&azimuth_max);
+
+    tinyxml2::XMLElement* eAzimuth_min = doc.FirstChildElement("EntryOfFile")->FirstChildElement("azimuth_min");
+    double azimuth_min;
+    eAzimuth_min->QueryDoubleText(&azimuth_min);
+
+    tinyxml2::XMLElement* eDelta_azimuth = doc.FirstChildElement("EntryOfFile")->FirstChildElement("delta_azimuth");
+    double delta_azimuth;
+    eDelta_azimuth->QueryDoubleText(&delta_azimuth);
+
+
+    // Paths
+    std::string dataPath = "/home/hvh/MyGit/PointCloud_Denoising/data/Logs/" + LogName + "/" + LIDARName;
+
     std::string outputDir = std::to_string(delta_azimuth).substr(0, 4) + "_" + std::to_string(height) + "x" + std::to_string(width);
-    std::string outputPath = "/home/hvh/MyGit/PointCloud_Denoising/data/Output/" + std::string(argv[1]) + "/" + std::string(argv[2]) + "/" + outputDir + "/";
+    std::string outputPath = "/home/hvh/MyGit/PointCloud_Denoising/data/Output/" + LogName + "/" + LIDARName + "/" + outputDir + "/";
     createDir(outputPath);
 
     std::string distancePath = outputPath + "distance/";
@@ -57,7 +87,7 @@ int main(int argc, char* argv[])
 
     std::string intensityNoisePath = outputPath + "intensityNoise/";
     createDir(intensityNoisePath);
-    
+
 
     // Azimuth reading
     CSVReader azimuthReader;
@@ -68,6 +98,7 @@ int main(int argc, char* argv[])
     azimuthReader.writeOutputs(azimuthData);
     std::cout << "azimuthData:\t(" << azimuthData.size() << " rows, " << azimuthData[0].size() << " cols)" << std::endl;
 
+
     // Distance reading
     CSVReader distanceReader;
     std::vector<std::vector<double>> distanceData;
@@ -76,6 +107,7 @@ int main(int argc, char* argv[])
     distanceReader.processData();
     distanceReader.writeOutputs(distanceData);
     std::cout << "distanceData:\t(" << distanceData.size() << " rows, " << distanceData[0].size() << " cols)" << std::endl;
+
 
     // Intensity reading
     CSVReader intensityReader;
@@ -86,6 +118,7 @@ int main(int argc, char* argv[])
     intensityReader.writeOutputs(intensityData);
     std::cout << "intensityData:\t(" << intensityData.size() << " rows, " << intensityData[0].size() << " cols)" << std::endl;
 
+
     // Video objects
     cv::VideoWriter videoDistance(outputPath + "Distance.avi", 
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
@@ -95,7 +128,8 @@ int main(int argc, char* argv[])
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
     cv::VideoWriter videoDenoisedIntensity(outputPath + "DenoisedIntensity.avi", 
                                     cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(width, height), false);
-                                
+
+
     // PointCloud Denosing
     for (int i {0}; i < azimuthData.size(); ++i) {
         // Spherical projection 

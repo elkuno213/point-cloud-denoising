@@ -10,7 +10,8 @@ set_max_warning_level ()
 
 
 ##################################################    Options     ##################################################
-option(BUILD_TESTS "Build tests." ON)
+option(BUILD_TESTS "Build tests." OFF)
+set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/install CACHE PATH "Prefix added to install directories")
 
 
 ##################################################    Sources     ##################################################
@@ -44,12 +45,21 @@ include(import_library)
 #   import_library(Boost_INCLUDE_DIRS Boost_IOSTREAMS_LIBRARY_DEBUG Boost_IOSTREAMS_LIBRARY_RELEASE)
 # - You may also set the PROJECT_INCLUDE_DIRS and PROJECT_LIBRARIES instead of using import_library.
 
-# Link OpenCV libraries
-find_package(OpenCV REQUIRED PATHS /home/hvh/Libraries/OpenCV_4_5_2/install_with_GTK/lib/cmake/opencv4)
-# import_library(${OpenCV_INCLUDE_DIRS} ${OpenCV_LIBS})
-set(PROJECT_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
-set(PROJECT_LIBRARIES ${PROJECT_LIBRARIES} ${OpenCV_LIBS})
+find_package(OpenCV REQUIRED PATHS 3rdparty/OpenCV_4_5_2/lib/cmake/opencv4) # OpenCV libraries
+find_package(tinyxml2 REQUIRED PATHS /home/hvh/Libraries/TinyXML2_8_0_0/install/lib/cmake/tinyxml2) # TinyXML2 library
 
+# In case that the 3rdparty is out of the source tree
+# set(PROJECT_INCLUDE_DIRS  ${PROJECT_INCLUDE_DIRS}
+#                           ${OpenCV_INCLUDE_DIRS}
+# )
+
+set(PROJECT_LIBRARIES ${PROJECT_LIBRARIES} 
+                      ${OpenCV_LIBS} 
+                      tinyxml2::tinyxml2
+)
+
+# message(PROJECT_INCLUDE_DIRS="${PROJECT_INCLUDE_DIRS}")
+# message(PROJECT_LIBRARIES="${PROJECT_LIBRARIES}")
 
 ##################################################    Targets     ##################################################
 add_executable(${PROJECT_NAME} ${PROJECT_FILES})
@@ -90,12 +100,11 @@ endif()
 
 
 ##################################################  Installation  ##################################################
-set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install")
-install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}-config
+install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config
   RUNTIME DESTINATION bin)
 install(DIRECTORY include/ DESTINATION include)
-install(EXPORT  ${PROJECT_NAME}-config DESTINATION cmake)
-export (TARGETS ${PROJECT_NAME}        FILE        ${PROJECT_NAME}-config.cmake)
+install(EXPORT  ${PROJECT_NAME}Config DESTINATION cmake)
+export (TARGETS ${PROJECT_NAME}        FILE        ${PROJECT_NAME}Config.cmake)
 
 
 #################################################  Uninstallation  #################################################

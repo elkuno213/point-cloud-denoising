@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EntryOfFile>
+  <LogName>Log_2min</LogName> <!-- Log_05s, Log_30s, Log_2min -->
+  <LIDARName>Front</LIDARName> <!-- Front, Back -->
+  <height>32</height> <!-- Image height (default: 32 pixels) -->
+  <width>1000</width> <!-- Image width (default: 1000 pixels) -->
+  <elevation_max>15.0</elevation_max> <!-- Maximum elevation angle (default: 15 degree) -->
+  <elevation_min>-16.0</elevation_min> <!-- Minimum elevation angle (default: -16 degree) -->
+  <delta_elevation>1.0</delta_elevation> <!-- Resolution of elevation angle (default: 1.0 degree) -->
+  <azimuth_max>360.0</azimuth_max> <!-- Maximum azimuth angle (default: 360 degree) -->
+  <azimuth_min>0.0</azimuth_min> <!-- Minimum azimuth angle (default: 0 degree) -->
+  <delta_azimuth>0.18</delta_azimuth> <!-- Resolution of azimuth angle (default: 0.18 degree) -->
+</EntryOfFile>
