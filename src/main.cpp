@@ -22,45 +22,77 @@ void display2DVector(std::vector<std::vector<T>> vector);
 int main(int argc, char* argv[])
 {
     // Parameters
-    tinyxml2::XMLDocument doc;
-    tinyxml2::XMLError result = doc.LoadFile(argv[1]);
+    tinyxml2::XMLDocument parameterFile;
+    tinyxml2::XMLError result = parameterFile.LoadFile(argv[1]);
     if (result != tinyxml2::XML_SUCCESS) 
         return false;
 
-    std::string LogName = doc.FirstChildElement("EntryOfFile")->FirstChildElement("LogName")->GetText();
-    std::string LIDARName = doc.FirstChildElement("EntryOfFile")->FirstChildElement("LIDARName")->GetText();
+    std::string LogName = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("LogName")->GetText();
+    std::string LIDARName = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("LIDARName")->GetText();
 
-    tinyxml2::XMLElement* eHeight = doc.FirstChildElement("EntryOfFile")->FirstChildElement("height");
+    tinyxml2::XMLElement* eHeight = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("height");
     int height;
     eHeight->QueryIntText(&height);
 
-    tinyxml2::XMLElement* eWidth = doc.FirstChildElement("EntryOfFile")->FirstChildElement("width");
+    tinyxml2::XMLElement* eWidth = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("width");
     int width;
     eWidth->QueryIntText(&width);
 
-    tinyxml2::XMLElement* eElevation_max = doc.FirstChildElement("EntryOfFile")->FirstChildElement("elevation_max");
+    tinyxml2::XMLElement* eElevation_max = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("elevation_max");
     double elevation_max;
     eElevation_max->QueryDoubleText(&elevation_max);
 
-    tinyxml2::XMLElement* eElevation_min = doc.FirstChildElement("EntryOfFile")->FirstChildElement("elevation_min");
+    tinyxml2::XMLElement* eElevation_min = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("elevation_min");
     double elevation_min;
     eElevation_min->QueryDoubleText(&elevation_min);
 
-    tinyxml2::XMLElement* eDelta_elevation = doc.FirstChildElement("EntryOfFile")->FirstChildElement("delta_elevation");
+    tinyxml2::XMLElement* eDelta_elevation = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("delta_elevation");
     double delta_elevation;
     eDelta_elevation->QueryDoubleText(&delta_elevation);
 
-    tinyxml2::XMLElement* eAzimuth_max = doc.FirstChildElement("EntryOfFile")->FirstChildElement("azimuth_max");
+    tinyxml2::XMLElement* eAzimuth_max = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("azimuth_max");
     double azimuth_max;
     eAzimuth_max->QueryDoubleText(&azimuth_max);
 
-    tinyxml2::XMLElement* eAzimuth_min = doc.FirstChildElement("EntryOfFile")->FirstChildElement("azimuth_min");
+    tinyxml2::XMLElement* eAzimuth_min = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("azimuth_min");
     double azimuth_min;
     eAzimuth_min->QueryDoubleText(&azimuth_min);
 
-    tinyxml2::XMLElement* eDelta_azimuth = doc.FirstChildElement("EntryOfFile")->FirstChildElement("delta_azimuth");
+    tinyxml2::XMLElement* eDelta_azimuth = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("delta_azimuth");
     double delta_azimuth;
     eDelta_azimuth->QueryDoubleText(&delta_azimuth);
+
+    tinyxml2::XMLElement* eH_D = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("DistanceImage")->FirstChildElement("h");
+    float h_D;
+    eH_D->QueryFloatText(&h_D);
+
+    tinyxml2::XMLElement* eTemplateWindowSize_D = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("DistanceImage")->FirstChildElement("templateWindowSize");
+    int templateWindowSize_D;
+    eTemplateWindowSize_D->QueryIntText(&templateWindowSize_D);
+
+    tinyxml2::XMLElement* eSearchWindowSize_D = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("DistanceImage")->FirstChildElement("searchWindowSize");
+    int searchWindowSize_D;
+    eSearchWindowSize_D->QueryIntText(&searchWindowSize_D);
+
+    tinyxml2::XMLElement* eNonNoiseLevel_D = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("DistanceImage")->FirstChildElement("nonNoiseLevel");
+    double nonNoiseLevel_D;
+    eNonNoiseLevel_D->QueryDoubleText(&nonNoiseLevel_D);
+
+    tinyxml2::XMLElement* eH_I = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("IntensityImage")->FirstChildElement("h");
+    float h_I;
+    eH_I->QueryFloatText(&h_I);
+
+    tinyxml2::XMLElement* eTemplateWindowSize_I = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("IntensityImage")->FirstChildElement("templateWindowSize");
+    int templateWindowSize_I;
+    eTemplateWindowSize_I->QueryIntText(&templateWindowSize_I);
+
+    tinyxml2::XMLElement* eSearchWindowSize_I = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("IntensityImage")->FirstChildElement("searchWindowSize");
+    int searchWindowSize_I;
+    eSearchWindowSize_I->QueryIntText(&searchWindowSize_I);
+
+    tinyxml2::XMLElement* eNonNoiseLevel_I = parameterFile.FirstChildElement("EntryOfFile")->FirstChildElement("IntensityImage")->FirstChildElement("nonNoiseLevel");
+    double nonNoiseLevel_I;
+    eNonNoiseLevel_I->QueryDoubleText(&nonNoiseLevel_I);
 
 
     // Paths
@@ -166,7 +198,7 @@ int main(int argc, char* argv[])
         cv::Mat denoisedDistanceImage, distanceNoise;
         double distanceNoiseRatio;
         ImageDenoising idDistance;
-        idDistance.setParameters(3, 7, 21, 0.03);
+        idDistance.setParameters(h_D, templateWindowSize_D, searchWindowSize_D, nonNoiseLevel_D);
         idDistance.readInputs(distanceImage);
         idDistance.processData();
         idDistance.writeOutputs(denoisedDistanceImage, distanceNoise, distanceNoiseRatio);
@@ -184,7 +216,7 @@ int main(int argc, char* argv[])
         cv::Mat denoisedIntensityImage, intensityNoise;
         double intensityNoiseRatio;
         ImageDenoising idIntensity;
-        idIntensity.setParameters(10, 7, 21, 0.03);
+        idIntensity.setParameters(h_I, templateWindowSize_I, searchWindowSize_I, nonNoiseLevel_I);
         idIntensity.readInputs(intensityImage);
         idIntensity.processData();
         idIntensity.writeOutputs(denoisedIntensityImage, intensityNoise, intensityNoiseRatio);
@@ -212,7 +244,7 @@ void createDir(std::string dirPath)
 
 void denoiseImageExmaple(int argc, char* argv[]) 
 {
-    cv::Mat image = cv::imread("/home/hvh/MyGit/PointCloud_Denoising/data/Back/0.18_32x1000/intensityImages/intensityImage" + std::to_string(atoi(argv[5])) + ".png", cv::IMREAD_GRAYSCALE);
+    cv::Mat image = cv::imread(argv[5], cv::IMREAD_GRAYSCALE);
     // image.convertTo(image, CV_64F);
     cv::Mat denoisedImage, noise;
     double noiseRatio;
