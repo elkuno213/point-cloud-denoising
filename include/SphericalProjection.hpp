@@ -13,8 +13,8 @@
 #include <algorithm>
 #include <opencv2/opencv.hpp>
 
-#ifndef _SphericalProjection_H
-#define _SphericalProjection_H
+#ifndef _SphericalProjection_HPP
+#define _SphericalProjection_HPP
 
 class SphericalProjection {
 
@@ -108,4 +108,4 @@ private:
 
 };
 
-#endif // _SphericalProjection_H
+#endif // _SphericalProjection_HPP

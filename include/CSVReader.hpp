@@ -12,8 +12,8 @@
 #include <vector>
 #include "rapidcsv.h"
 
-#ifndef _CSVReader_H
-#define _CSVReader_H
+#ifndef _CSVReader_HPP
+#define _CSVReader_HPP
 
 class CSVReader {
 
@@ -65,4 +65,4 @@ private:
 
 };
 
-#endif // _CSVReader_H
+#endif // _CSVReader_HPP

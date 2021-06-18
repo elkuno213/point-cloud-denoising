@@ -11,8 +11,8 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-#ifndef _ImageDenoising_H
-#define _ImageDenoising_H
+#ifndef _ImageDenoising_HPP
+#define _ImageDenoising_HPP
 
 class ImageDenoising {
 
@@ -90,4 +90,4 @@ private:
 	void getMinMaxLim(const cv::Mat image, T& minLimit, T& maxLimit);
 };
 
-#endif // _ImageDenoising_H
+#endif // _ImageDenoising_HPP
