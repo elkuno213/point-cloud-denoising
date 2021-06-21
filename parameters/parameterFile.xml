@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <EntryOfFile>
-  <LogName>Log_2min</LogName> <!-- Log_05s, Log_30s, Log_2min -->
-  <LIDARName>Front</LIDARName> <!-- Front, Back -->
+  <PointCloud_Denoising>
+    <LogName>Log_05s</LogName> <!-- Log_05s, Log_30s, Log_2min -->
+    <LIDARName>Front</LIDARName> <!-- Front, Back -->
 
-  <height>32</height> <!-- Image height (default: 32 pixels) -->
-  <width>1000</width> <!-- Image width (default: 1000 pixels) -->
-  <elevation_max>15.0</elevation_max> <!-- Maximum elevation angle (default: 15 degree) -->
-  <elevation_min>-16.0</elevation_min> <!-- Minimum elevation angle (default: -16 degree) -->
-  <delta_elevation>1.0</delta_elevation> <!-- Resolution of elevation angle (default: 1.0 degree) -->
-  <azimuth_max>360.0</azimuth_max> <!-- Maximum azimuth angle (default: 360 degree) -->
-  <azimuth_min>0.0</azimuth_min> <!-- Minimum azimuth angle (default: 0 degree) -->
-  <delta_azimuth>0.18</delta_azimuth> <!-- Resolution of azimuth angle (default: 0.18 degree) -->
+    <height>32</height> <!-- Image height (default: 32 pixels) -->
+    <width>1000</width> <!-- Image width (default: 1000 pixels) -->
+    <elevation_max>15.0</elevation_max> <!-- Maximum elevation angle (default: 15 degree) -->
+    <elevation_min>-16.0</elevation_min> <!-- Minimum elevation angle (default: -16 degree) -->
+    <delta_elevation>1.0</delta_elevation> <!-- Resolution of elevation angle (default: 1.0 degree) -->
+    <azimuth_max>360.0</azimuth_max> <!-- Maximum azimuth angle (default: 360 degree) -->
+    <azimuth_min>0.0</azimuth_min> <!-- Minimum azimuth angle (default: 0 degree) -->
+    <delta_azimuth>0.18</delta_azimuth> <!-- Resolution of azimuth angle (default: 0.18 degree) -->
 
-  <DistanceImage>
-    <h>3</h> <!--  Parameter regulating filter strength (default: 3)
+    <!-- DistanceImage -->
+    <h_D>3</h_D> <!--  Parameter regulating filter strength (default: 3)
               Big h value perfectly removes noise but also removes image details.
               Smaller h value preserves details but also preserves some noise. -->
-    <templateWindowSize>7</templateWindowSize> <!--  Size in pixels of the template patch that is used to compute weights. It should be odd.(default: 7) -->
-    <searchWindowSize>21</searchWindowSize> <!--  Size in pixels of the window that is used to compute weighted average for given pixel. It should be odd.(default: 21)
+    <templateWindowSize_D>7</templateWindowSize_D> <!--  Size in pixels of the template patch that is used to compute weights. It should be odd.(default: 7) -->
+    <searchWindowSize_D>21</searchWindowSize_D> <!--  Size in pixels of the window that is used to compute weighted average for given pixel. It should be odd.(default: 21)
                                             Affect performance linearly: greater searchWindowsSize - greater denoising time. -->
-    <nonNoiseLevel>0.03</nonNoiseLevel> <!--  Percentage of non nosie pixel. (default: 0.03 = 3%)
+    <nonNoiseLevel_D>0.03</nonNoiseLevel_D> <!--  Percentage of non nosie pixel. (default: 0.03 = 3%)
                                         For example, with a noise image of [0.0; 255.0], a nonNoiseLevel of 0.1 (10%) means that all pixels less than 
                                         10% * 255.0 are thresholded to 0.0 and considered as non noise ones. -->
-  </DistanceImage>
 
-  <IntensityImage>
-    <h>10</h> <!--  Parameter regulating filter strength (default: 10)
+    <!-- IntensityImage -->
+    <h_I>10</h_I> <!--  Parameter regulating filter strength (default: 10)
               Big h value perfectly removes noise but also removes image details.
               Smaller h value preserves details but also preserves some noise. -->
-    <templateWindowSize>7</templateWindowSize> <!--  Size in pixels of the template patch that is used to compute weights. It should be odd.(default: 7) -->
-    <searchWindowSize>21</searchWindowSize> <!--  Size in pixels of the window that is used to compute weighted average for given pixel. It should be odd.(default: 21)
+    <templateWindowSize_I>7</templateWindowSize_I> <!--  Size in pixels of the template patch that is used to compute weights. It should be odd.(default: 7) -->
+    <searchWindowSize_I>21</searchWindowSize_I> <!--  Size in pixels of the window that is used to compute weighted average for given pixel. It should be odd.(default: 21)
                                             Affect performance linearly: greater searchWindowsSize - greater denoising time. -->
-    <nonNoiseLevel>0.03</nonNoiseLevel> <!--  Percentage of non nosie pixel. (default: 0.03 = 3%)
+    <nonNoiseLevel_I>0.03</nonNoiseLevel_I> <!--  Percentage of non nosie pixel. (default: 0.03 = 3%)
                                         For example, with a noise image of [0.0; 255.0], a nonNoiseLevel of 0.1 (10%) means that all pixels less than 
                                         10% * 255.0 are thresholded to 0.0 and considered as non noise ones. -->
-  </IntensityImage>
+  </PointCloud_Denoising>
 </EntryOfFile>

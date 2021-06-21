@@ -46,6 +46,7 @@ include(import_library)
 # - You may also set the PROJECT_INCLUDE_DIRS and PROJECT_LIBRARIES instead of using import_library.
 
 find_package(OpenCV REQUIRED PATHS /home/hvh/Libraries/lib/OpenCV_4_5_2_with_GTK/lib/cmake/opencv4) # OpenCV libraries
+find_package(ParameterFinder REQUIRED PATHS /home/hvh/Libraries/lib/ParameterFinder/cmake) # ParameterFinder library
 find_package(tinyxml2 REQUIRED PATHS /home/hvh/Libraries/lib/TinyXML2_8_0_0/lib/cmake/tinyxml2) # TinyXML2 library
 
 # In case that the 3rdparty is out of the source tree
@@ -56,6 +57,7 @@ find_package(tinyxml2 REQUIRED PATHS /home/hvh/Libraries/lib/TinyXML2_8_0_0/lib/
 set(PROJECT_LIBRARIES ${PROJECT_LIBRARIES} 
                       ${OpenCV_LIBS} 
                       tinyxml2::tinyxml2
+                      ParameterFinder
 )
 
 # message(PROJECT_INCLUDE_DIRS="${PROJECT_INCLUDE_DIRS}")
