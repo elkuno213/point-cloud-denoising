@@ -5,7 +5,7 @@
  * @brief Spherical projection of LIDAR PointCloud into 2D image.
  * @version 1.0
  * @date 02/06/2021
- * @comment 
+ * @comment
  */
 
 #include "SphericalProjection.hpp"
@@ -43,7 +43,7 @@ PUBLIC METHODS
 	@param _delta_azimuth Azimuth resolution (degree)
 **/
 void SphericalProjection::setParameters(int _height, int _width,
-										double _elevation_max, double _elevation_min, double _delta_elevation, 
+										double _elevation_max, double _elevation_min, double _delta_elevation,
 										double _azimuth_max, double _azimuth_min, double _delta_azimuth) {
 	this->height 			= _height;			// pixel
 	this->width 			= _width;			// pixel
@@ -82,13 +82,13 @@ void SphericalProjection::processData() {
 
 	// Make image
 	this->oImage = cv::Mat(this->height, this->width, CV_64FC(4), cv::Scalar::all(0));
-	for (int i {0}; i < this->iAzimuths.size(); ++i) {
+	for (int i {0}; i < static_cast<int>(this->iAzimuths.size()); ++i) {
 		double elevation = this->elevation_max;		// elevation angle in degree
 		for (int j {0}; j < this->height; ++j) {
 			int pixel_u = 0, pixel_v = 0;
 			normalize(elevation, this->iAzimuths[i], &pixel_u, &pixel_v);
-			this->oImage.at<cv::Vec4d>(pixel_u, pixel_v) = cv::Vec4d{elevation, this->iAzimuths[i], 
-																	 this->iDistances[this->height * i + j], 
+			this->oImage.at<cv::Vec4d>(pixel_u, pixel_v) = cv::Vec4d{elevation, this->iAzimuths[i],
+																	 this->iDistances[this->height * i + j],
 																	 this->iIntensities[this->height * i + j]};
 			elevation -= 1;
 		}
@@ -107,16 +107,17 @@ void SphericalProjection::writeOutputs(cv::Mat& _oImage) {
 PRIVATE METHODS
 ******************************************************************************************************************************************************/
 /** @brief Angle checking
- * 1. If maximum < minimum, then swap maximum and minimum values 
+ * 1. If maximum < minimum, then swap maximum and minimum values
  * 2. If maximum - minimum = 360°, then these two values are equal and maximum -= resolution.
 	@param maximum InputOutput maximum value
 	@param minimum InputOutput minimum value
 	@param resolution Input resolution value
 **/
 void SphericalProjection::angleChecking(double& maximum, double& minimum, const double resolution) {
-    if (maximum < minimum)
-        std::swap(maximum, minimum);
-	maximum = (maximum - minimum == 360.0 ? maximum - resolution : maximum);
+  if (maximum < minimum) {
+    std::swap(maximum, minimum);
+  }
+  maximum = (maximum - minimum == 360.0 ? maximum - resolution : maximum);
 }
 
 /** @brief Correct height/width based on their maximum value calculated from angle specification
