@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data_folder value="/tmp/data/lidar_back" type="string" brief="Log_05s, Log_30s, Log_2min" />
+
+  <height value="32" type="int" brief="Image height (default: 32 pixels)" />
+  <width value="1000" type="int" brief="Image width (default: 1000 pixels)" />
+  <elevation_max value="15.0" type="double" brief="Maximum elevation angle (default: 15 degree)" />
+  <elevation_min value="-16.0" type="double" brief="Minimum elevation angle (default: -16 degree)" />
+  <elevation_resolution value="1.0" type="double" brief="Resolution of elevation angle (default: 1.0 degree)" />
+  <azimuth_max value="360.0" type="double" brief="Maximum azimuth angle (default: 360 degree)" />
+  <azimuth_min value="0.0" type="double" brief="Minimum azimuth angle (default: 0 degree)" />
+  <azimuth_resolution value="0.18" type="double" brief="Resolution of azimuth angle (default: 0.18 degree)" />
+
+  <!-- Distance parameters -->
+  <distance>
+    <h value="3" type="float" brief="Parameter regulating filter strength (default: 3) Big h value perfectly removes noise but also removes image details. Smaller h value preserves details but also preserves some noise." />
+    <template_window_size value="7" type="int" brief="Size in pixels of the template patch that is used to compute weights. It should be odd. (default: 7)" />
+    <search_window_size value="21" type="int" brief="Size in pixels of the window that is used to compute weighted average for given pixel. It should be odd. (default: 21) Affect performance linearly: greater searchWindowsSize - greater denoising time." />
+    <non_noise_level value="0.03" type="double" brief="Percentage of non-noise pixel. (default: 0.03 = 3%) For example, with a noise image of [0.0; 255.0], a nonNoiseLevel of 0.1 (10%) means that all pixels less than 10% * 255.0 are thresholded to 0.0 and considered as non-noise ones." />
+  </distance>
+
+  <!-- Intensity parameters -->
+  <intensity>
+    <h value="10" type="float" brief="Parameter regulating filter strength (default: 10) Big h value perfectly removes noise but also removes image details. Smaller h value preserves details but also preserves some noise." />
+    <template_window_size value="7" type="int" brief="Size in pixels of the template patch that is used to compute weights. It should be odd. (default: 7)" />
+    <search_window_size value="21" type="int" brief="Size in pixels of the window that is used to compute weighted average for given pixel. It should be odd. (default: 21) Affect performance linearly: greater searchWindowsSize - greater denoising time." />
+    <non_noise_level value="0.03" type="double" brief="Percentage of non-noise pixel. (default: 0.03 = 3%) For example, with a noise image of [0.0; 255.0], a nonNoiseLevel of 0.1 (10%) means that all pixels less than 10% * 255.0 are thresholded to 0.0 and considered as non-noise ones." />
+  </intensity>
+</root>

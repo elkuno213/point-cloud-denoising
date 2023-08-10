@@ -5,4 +5,3 @@ install-release
 build
 build-debug
 build-release
-data/*

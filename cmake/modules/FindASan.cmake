@@ -49,7 +49,7 @@ if (SANITIZE_ADDRESS)
     sanitizer_check_compiler_flags("${FLAG_CANDIDATES}" "AddressSanitizer"
         "ASan")
 
-    find_program(ASan_WRAPPER "asan-wrapper" PATHS ${CMAKE_MODULE_PATH})
+    find_program(ASan_WRAPPER "asan-wrapper" PATHS ${CMAKE_MODULE_data_file})
 	mark_as_advanced(ASan_WRAPPER)
 endif ()
 

@@ -15,7 +15,7 @@ include(CMakePackageConfigHelpers)
 set(point_cloud_denoising_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/app)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/app)
 
 
 

@@ -1,111 +1,69 @@
-/**
- * @name TEMPLATE FOR AUTONOMOUS DRIVING COMPONENTS
- * @copyright Gaussin Manugistique S.A. (c)
- * @author Vu-Hoi HUYNH
- * @brief Spherical projection of LIDAR PointCloud into 2D image.
- * @version 1.0
- * @date 02/06/2021
- * @comment 
- */
+#pragma once
 
+// Standard
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <algorithm>
+// 3rd-parties
 #include <opencv2/opencv.hpp>
 
-#ifndef _SphericalProjection_HPP
-#define _SphericalProjection_HPP
-
 class SphericalProjection {
+public:
+  SphericalProjection();
+  ~SphericalProjection();
+
+  void set_parameters(
+    int _height,
+    int _width,
+    double _elevation_max,
+    double _elevation_min,
+    double _elevation_resolution,
+    double _azimuth_max,
+    double _azimuth_min,
+    double _azimuth_resolution
+  );
+  void read_inputs(
+    std::vector<double>& _azimuths,
+    std::vector<double>& _iDistances,
+    std::vector<double>& _intensities
+  );
+  void process_data();
+  void write_outputs(cv::Mat& _image);
 
 private:
-	// Inputs
-	std::vector<double> iAzimuths;		// Azimuth data
-	std::vector<double> iDistances;		// Distance data
-	std::vector<double> iIntensities;	// Intensity data
+  // Check angle by:
+  // - 1. If max < min, then swap max and min values.
+  // - 2. If max - min = 360°, then they are equal and max -= resolution.
+  void correct_angle_limits(
+    double& angle_max, double& angle_min, double angle_resolution
+  );
+  // Correct height/width based on angle specification.
+  int correct_image_size(
+    const int size,
+    const double angle_max,
+    const double angle_min,
+    const double angle_resolution
+  );
+  // Project a point into image plane.
+  cv::Point2i project(const double elevation, const double azimuth);
 
-	// Outputs
-	cv::Mat oImage;						// Multi-channel Image (Channels: distance, elevation, azimuth, intensity)
-
-	// Parameters
-	int height;							// Image height (pixel)
-	int width;							// Image width (pixel)
-	double elevation_max;				// Maximum elevation (degree)
-	double elevation_min;				// Minimum elevation (degree)
-	double delta_elevation;				// Elevation resolution (degree)
-	double azimuth_max;					// Maximum azimuth (degree)
-	double azimuth_min;					// Minimum azimuth (degree)
-	double delta_azimuth;				// Azimuth resolution (degree)
-
-// Constructors & Destructors
-public:
-	// Constructor
-	SphericalProjection();
-
-	// Destructor
-	~SphericalProjection();
-
-// Public methods
-public:
-	/** @brief Set parameters for object.
-    	@param _height Image height (pixel)
-    	@param _width Image width (pixel)
-    	@param _elevation_max Maximum elevation (degree)
-    	@param _elevation_min Minimum elevation (degree)
-    	@param _delta_elevation Elevation resolution (degree)
-    	@param _azimuth_max Maximum azimuth (degree)
-    	@param _azimuth_min Minimum azimuth (degree)
-    	@param _delta_azimuth Azimuth resolution (degree)
-    **/
-	void setParameters(	int _height, int _width,
-						double _elevation_max, double _elevation_min, double _delta_elevation, 
-						double _azimuth_max, double _azimuth_min, double _delta_azimuth);
-
-	/** @brief Read inputs for object.
-		@param _iAzimuths Azimuth data
-		@param _iDistances Distance data
-		@param _iIntensities Intensity data
-    **/
-	void readInputs(std::vector<double>& _iAzimuths,
-					std::vector<double>& _iDistances,
-					std::vector<double>& _iIntensities);
-
-	/** @brief Process data for object.
-    **/
-	void processData();
-
-	/** @brief Write out the processed data.
-    	@param _oImage Image projected
-    **/
-	void writeOutputs(cv::Mat& _oImage);
-	
-// Private methods
 private:
-	/** @brief Angle checking
-	 * 1. If maximum < minimum, then swap maximum and minimum values 
-	 * 2. If maximum - minimum = 360°, then these two values are equal and maximum -= resolution.
-		@param maximum InputOutput maximum value
-		@param minimum InputOutput minimum value
-		@param resolution Input resolution value
-    **/
-	void angleChecking(double& maximum, double& minimum, double resolution);
+  // Inputs
+  std::vector<double> azimuths_;
+  std::vector<double> distances_;
+  std::vector<double> intensities_;
 
-	/** @brief Correct height/width based on their maximum value calculated from angle specification
-		@param size InputOutput size value (height/width)
-		@param maximum Input maximum value
-		@param minimum Input minimum value
-		@param resolution Input resolution value
-    **/
-	void sizeCorrection(int& size, const double maximum, const double minimum, const double resolution);
+  // Outputs
+  cv::Mat image_; // Multi-channel Image (Channels: distance, elevation,
+                  // azimuth, intensity)
 
-	/** @brief Project a point into image plane.
-		@param elevation Input elevation value
-		@param azimuth Input azimuth value
-		@param pixel_u Output pixel element u
-		@param pixel_v Output pixel element v
-    **/
-	void normalize(const double elevation, const double azimuth, int* pixel_u, int* pixel_v);
-
+  // Parameters
+  int height_                  = 32;   // Image height (pixel)
+  int width_                   = 512;  // Image width (pixel)
+  double elevation_max_        = 15.;  // Maximum elevation (°)
+  double elevation_min_        = -16.; // Minimum elevation (°)
+  double elevation_resolution_ = 1.;   // Elevation resolution (°)
+  double azimuth_max_          = 360.; // Maximum azimuth (°)
+  double azimuth_min_          = 0.;   // Minimum azimuth (°)
+  double azimuth_resolution_   = 0.09; // Azimuth resolution (°)
 };
-
-#endif // _SphericalProjection_HPP
