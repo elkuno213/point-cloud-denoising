@@ -49,8 +49,8 @@ endif()
 # OpenCV
 find_package(OpenCV CONFIG REQUIRED) # ${OpenCV_LIBRARIES}
 
-# # TinyXML2
-# find_package(TinyXML2 MODULE REQUIRED) # ${TinyXML2_LIBRARIES}
+# pugixml
+find_package(pugixml CONFIG REQUIRED) # pugixml
 
 
 

@@ -81,6 +81,7 @@
 				"VisualStudioExptTeam.vscodeintellicode",
 				"ms-azuretools.vscode-docker",
 				"redhat.vscode-xml",
+				"vadimcn.vscode-lldb",
 				"ms-iot.vscode-ros"
 			]
 		}

@@ -1,68 +1,35 @@
-/**
- * @name TEMPLATE FOR AUTONOMOUS DRIVING COMPONENTS
- * @copyright Gaussin Manugistique S.A. (c)
- * @author Vu-Hoi HUYNH
- * @brief CSV reader class
- * @version 1.0
- * @date 02/06/2021
- * @comment 
- */
+#pragma once
 
+// Standard
 #include <iostream>
 #include <vector>
+// 3rd-parties
 #include "rapidcsv.h"
 
-#ifndef _CSVReader_HPP
-#define _CSVReader_HPP
-
 class CSVReader {
+public:
+  CSVReader();
+  ~CSVReader();
+
+public:
+  void set_parameters(double _unit, int _column_name_index, int _row_name_index);
+  void read_inputs(const std::string _data_file);
+  void process_data();
+  void write_outputs(std::vector<std::vector<double>>& _data);
 
 private:
-	// Inputs
-	std::string iPath;							// Path to data file
+  // Inputs
+  std::string data_file_; // Path to data file
 
-	// Outputs
-	std::vector<std::vector<double>> oData;		// Output data 2D vector
-	
-	// Parameters
-	double unit;								// Data unit coefficient
-	int columnNameIdx;							// Zero-based row index of the column labels (-1 gives access to all rows as document data)
-	int rowNameIdx;								// Zero-based column index of the row labels (-1 gives access to all columns as document data)
+  // Outputs
+  std::vector<std::vector<double>> data_; // Output data 2D vector
 
-// Constructors & Destructors
-public:
-	// Constructor
-	CSVReader();
-
-	// Destructor
-	~CSVReader();
-
-// Public methods
-public:
-	/** @brief Set parameters for object.
-    	@param _unit Unit coefficient to scale data
-    	@param _columnNameIdx Zero-based row index of the column labels (-1 gives access to all rows as document data)
-    	@param _rowNameIdx Zero-based column index of the row labels (-1 gives access to all columns as document data)
-    **/
-	void setParameters(double _unit, int _columnNameIdx, int _rowNameIdx);
-
-	/** @brief Read input for object.
-		@param _iPath Input path to data file
-    **/
-	void readInputs(const std::string _iPath);
-
-	/** @brief Process data for object.
-    **/
-	void processData();
-
-	/** @brief Write out the processed data.
-    	@param _oData Input processed data
-    **/
-	void writeOutputs(std::vector<std::vector<double>>& _oData);
-
-// Private methods
-private:
-
+  // Data unit coefficient
+  double unit_ = 1.;
+  // Zero-based row index of the column labels (-1 gives access to all rows as
+  // document data)
+  int column_name_index_ = -1;
+  // Zero-based column index of the row labels (-1 gives access to all columns
+  // as document data)
+  int row_name_index_ = 0;
 };
-
-#endif // _CSVReader_HPP

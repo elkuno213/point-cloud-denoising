@@ -1,93 +1,60 @@
-/**
- * @name TEMPLATE FOR AUTONOMOUS DRIVING COMPONENTS
- * @copyright Gaussin Manugistique S.A. (c)
- * @author Vu-Hoi HUYNH
- * @brief Image denoising class for CV_8U type
- * @version 1.0
- * @date 02/06/2021
- * @comment 
- */
+#pragma once
 
+// Standard
 #include <iostream>
+// 3rd-parties
 #include <opencv2/opencv.hpp>
 
-#ifndef _ImageDenoising_HPP
-#define _ImageDenoising_HPP
-
 class ImageDenoising {
+public:
+  ImageDenoising();
+  ~ImageDenoising();
+
+public:
+  void set_parameters(
+    float _h,
+    int _template_window_size,
+    int _search_window_size,
+    double _non_noise_level
+  );
+  void read_inputs(cv::Mat& _noisy_image);
+  void process_data();
+  void write_outputs(
+    cv::Mat& _denoised_image, cv::Mat& _noise, double& _noise_ratio
+  );
 
 private:
-	// Inputs
-	cv::Mat iNoisyImage;						// Input noisy image
+  template <typename T>
+  void get_limits(const cv::Mat image, T& min_limit, T& max_limit);
 
-	// Outputs
-	cv::Mat oDenoisedImage;						// Output denoised image
-	cv::Mat oNoise;								// Output noise
-	double oNoiseRatio;							// Percentage of noise of output noise
-	
-	// Parameters
-	float h;									// Parameter regulating filter strength. 
-												// Big h value perfectly removes noise but also removes image details.
-												// Smaller h value preserves details but also preserves some noise.
-	int templateWindowSize;						// Size in pixels of the template patch that is used to compute weights.
-												// Should be odd. Recommended value 7 pixels.
-	int searchWindowSize;						// Size in pixels of the window that is used to compute weighted average for given pixel. 
-												// Should be odd. Recommended value 21 pixels.
-												// Affect performance linearly: greater searchWindowsSize - greater denoising time.
-	double nonNoiseLevel;						// Percentage of non nosie pixel.
-												// For example, with a noise image of [0.0; 255.0], a nonNoiseLevel of 0.1 (10%) means that
-												// all pixels less than 10% * 255.0 are thresholded to 0.0 and considered as non noise ones.
-
-// Constructors & Destructors
-public:
-	// Constructor
-	ImageDenoising();
-
-	// Destructor
-	~ImageDenoising();
-
-// Public methods
-public:
-	/** @brief Set parameters for object.
-    	@param _h Parameter regulating filter strength.
-		Big h value perfectly removes noise but also removes image details.
-		Smaller h value preserves details but also preserves some noise.
-    	@param _templateWindowSize Size in pixels of the template patch that is used to compute weights.
-		Should be odd. Recommended value 7 pixels.
-    	@param _searchWindowSize Size in pixels of the window that is used to compute weighted average for given pixel.
-		Should be odd. Recommended value 21 pixels.
-		Affect performance linearly: greater searchWindowsSize - greater denoising time.
-    	@param _nonNoiseLevel Percentage of non nosie pixel.
-		For example, with a noise image of [0.0; 255.0], a nonNoiseLevel of 0.1 (10%) means that all pixels less than 
-		10% * 255.0 are thresholded to 0.0 and considered as non noise ones.
-    **/
-	void setParameters(float _h, int _templateWindowSize, int _searchWindowSize, double _nonNoiseLevel);
-
-	/** @brief Read inputs for object.
-		@param _iNoisyImage Noisy image
-    **/
-	void readInputs(cv::Mat& _iNoisyImage);
-
-	/** @brief Process data for object.
-    **/
-	void processData();
-
-	/** @brief Write out the processed data.
-    	@param _oDenoisedImage Image denoised
-    	@param _oNoise Noise
-    	@param _oNoiseRatio Noise ratio
-    **/
-	void writeOutputs(cv::Mat& _oDenoisedImage, cv::Mat& _oNoise, double& _oNoiseRatio);
-
-// Private methods
 private:
-	/** @brief Get min and max limits of an image, based on its type.
-    	@param image Input image
-    	@param image Output minLimit
-    	@param image Output maxLimit
-    **/
-	template<typename T>
-	void getMinMaxLim(const cv::Mat image, T& minLimit, T& maxLimit);
+  // Inputs
+  cv::Mat noisy_image_; // Input noisy image
+
+  // Outputs
+  cv::Mat denoised_image_; // Output denoised image
+  cv::Mat noise_;          // Output noise
+  double noise_ratio_;     // Percentage of noise of output noise
+
+  // Parameter regulating filter strength.
+  // Big h value perfectly removes noise but also removes image
+  // details. Smaller h value preserves details but also
+  // preserves some noise.
+  float h_ = 10.;
+  // Size in pixels of the template patch that is
+  // used to compute weights. Should be odd.
+  // Recommended value 7 pixels.
+  int template_window_size_ = 7;
+  // Size in pixels of the window that is used to
+  // compute weighted average for given pixel.
+  // Should be odd. Recommended value 21 pixels.
+  // Affect performance linearly: greater
+  // searchWindowsSize - greater denoising time.
+  int search_window_size_ = 21;
+  // Percentage of non nosie pixel.
+  // For example, with a noise image of [0.0; 255.0], a
+  // nonNoiseLevel of 0.1 (10%) means that all pixels
+  // less than 10% * 255.0 are thresholded to 0.0 and
+  // considered as non noise ones.
+  double non_noise_level_ = 0.;
 };
-
-#endif // _ImageDenoising_HPP
