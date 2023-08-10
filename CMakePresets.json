@@ -1,0 +1,77 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "base",
+      "displayName": "base config",
+      "description": "A base config needs to be inherited",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-${presetName}",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "/usr/bin/clang-14",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++-14",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/install-${presetName}",
+        "CATKIN_DEVEL_PREFIX": "${sourceDir}/devel-${presetName}",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "debug config",
+      "description": "A debug config",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "release config",
+      "description": "A release config",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "displayName": "debug build",
+      "description": "",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "release",
+      "displayName": "release build",
+      "description": "",
+      "configurePreset": "release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "debug test",
+      "description": "",
+      "displayName": "",
+      "configurePreset": "debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "release test",
+      "description": "",
+      "displayName": "",
+      "configurePreset": "release",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

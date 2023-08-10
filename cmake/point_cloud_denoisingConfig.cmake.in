@@ -1,0 +1,24 @@
+# required by CMakePackageConfigHelpers
+# https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html
+@PACKAGE_INIT@
+
+
+# forward the targets
+include(${CMAKE_CURRENT_LIST_DIR}/point_cloud_denoisingTargets.cmake)
+
+
+# define INCLUDE_DIRS and LIBRARIES, required for catkin_package
+set_and_check(point_cloud_denoising_INCLUDE_DIRS "@PACKAGE_INCLUDE_INSTALL_DIR@")
+set(point_cloud_denoising_LIBRARIES point_cloud_denoising)
+
+
+# forward dependencies AFTER expanding the @PACKAGE_<...>@ macros!!!
+# otherwise the expanded paths might point to a found package
+include(CMakeFindDependencyMacro)
+find_dependency(PCL REQUIRED NO_MODULE)
+find_dependency(OpenCV REQUIRED)
+find_dependency(tinyxml2 REQUIRED NO_MODULE)
+
+
+# labels the packages as found or not
+check_required_components(point_cloud_denoising)

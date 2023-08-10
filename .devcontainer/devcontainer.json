@@ -1,0 +1,98 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+  "name": "${containerWorkspaceFolder}",
+
+	// Use already-built image
+	"image": "huynhvuh/hvhrobotics:ubuntu-stable",
+	// "image": "hvhrobotics:ubuntu-dev",
+
+	// // Build an image based on Dockerfile
+	// "build": {
+	// 	"context": "..",
+	// 	"dockerfile": "../Dockerfile.ubuntu-stable",
+	// 	"args": {
+	// 		"tag": "hvhrobotics:ubuntu-stable"
+	// 	}
+	// },
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": true,
+			"configureZshAsDefaultShell": true,
+			"installOhMyZsh": true
+		},
+		"ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {
+			"plugins": "git zsh-autosuggestions zsh-syntax-highlighting dirhistory history colored-man-pages web-search docker",
+			"omzPlugins": "https://github.com/zsh-users/zsh-autosuggestions https://github.com/zsh-users/zsh-syntax-highlighting.git",
+			"username": "nonroot"
+		},
+	},
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"settings": {
+				// editor
+				"editor.semanticHighlighting.enabled": true,
+				"editor.unicodeHighlight.nonBasicASCII": false,
+				"editor.renderWhitespace": "boundary",
+				"editor.tabSize": 2,
+				"editor.formatOnSave": false,
+				"editor.foldingHighlight": false,
+				"editor.rulers": [80, 100],
+				"explorer.confirmDelete": false,
+				"explorer.confirmDragAndDrop": false,
+				"files.eol": "\n",
+				"files.insertFinalNewline": true,
+				"files.trimTrailingWhitespace": true,
+				"files.autoGuessEncoding": true,
+				"workbench.editorAssociations": {
+					"*.ipynb": "jupyter-notebook"
+				},
+				"terminal.integrated.inheritEnv": false,
+				"terminal.integrated.enableMultiLinePasteWarning": false,
+				"security.workspace.trust.untrustedFiles": "open",
+				"debug.onTaskErrors": "debugAnyway",
+				"keyboard.dispatch": "keyCode",
+				"window.zoomLevel": 1,
+				// zsh
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "bash",
+						"icon": "terminal-bash"
+					},
+					"zsh": {
+						"path": "zsh"
+					}
+				},
+				// Git
+				"git.confirmSync": false,
+				"git.ignoreMissingGitWarning": true,
+				"git.openRepositoryInParentFolders": "never",
+			},
+			"extensions": [
+				"ms-vscode.cpptools-extension-pack",
+				"xaver.clang-format",
+				"llvm-vs-code-extensions.vscode-clangd",
+				"Gruntfuggly.todo-tree",
+				"VisualStudioExptTeam.vscodeintellicode",
+				"ms-azuretools.vscode-docker",
+				"redhat.vscode-xml",
+				"ms-iot.vscode-ros"
+			]
+		}
+	},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Uncomment the next line to run commands after the container is created.
+	"postCreateCommand": "echo 'source /opt/ros/noetic/setup.bash' >> ~/.bashrc && echo 'source /opt/ros/noetic/setup.zsh' >> ~/.zshrc",
+
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "devcontainer"
+
+	"containerUser": "nonroot"
+}

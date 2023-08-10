@@ -5,7 +5,7 @@
  * @brief CSV reader class
  * @version 1.0
  * @date 02/06/2021
- * @comment 
+ * @comment
  */
 
 #include "CSVReader.hpp"
@@ -50,7 +50,7 @@ void CSVReader::readInputs(const std::string _iPath) {
 **/
 void CSVReader::processData() {
 	rapidcsv::Document CSVDoc(this->iPath, rapidcsv::LabelParams(this->columnNameIdx, this->rowNameIdx), rapidcsv::SeparatorParams(';'));
-	for (auto i {0}; i < CSVDoc.GetRowCount(); ++i) {
+	for (std::size_t i {0}; i < CSVDoc.GetRowCount(); ++i) {
 		std::vector<double> row = CSVDoc.GetRow<double>(i);
 		if (this->unit != 1.0)
 			std::transform(row.begin(), row.end(), row.begin(), [this](double& element){ return element * unit; });
