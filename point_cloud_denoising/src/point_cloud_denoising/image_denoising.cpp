@@ -1,22 +1,23 @@
-#include "ImageDenoising.hpp"
+#include "image_denoising.hpp"
 
 ImageDenoising::ImageDenoising() {}
 
 ImageDenoising::~ImageDenoising() {}
 
 void ImageDenoising::set_parameters(
-  float _h,
-  int _templateWindowSize,
-  int _searchWindowSize,
-  double _nonNoiseLevel
+  const float _h,
+  const int _template_window_size,
+  const int _search_window_size,
+  const double _non_noise_level
 ) {
   h_                    = _h;
-  template_window_size_ = _templateWindowSize;
-  search_window_size_   = _searchWindowSize;
-  non_noise_level_      = _nonNoiseLevel;
+  template_window_size_ = _template_window_size;
+  search_window_size_   = _search_window_size;
+  non_noise_level_      = _non_noise_level;
 }
 
-void ImageDenoising::read_inputs(cv::Mat& _noisy_image) {
+void ImageDenoising::read_inputs(const cv::Mat& _noisy_image) {
+  // TODO: consider clone()
   noisy_image_ = _noisy_image;
 }
 
@@ -26,8 +27,11 @@ void ImageDenoising::process_data() {
     // If the image type is not CV_8U, convert it.
     noisy_image_.convertTo(noisy_image_, CV_8U);
   }
-  denoised_image_
-    = cv::Mat(noisy_image_.size(), noisy_image_.depth(), cv::Scalar::all(0));
+  denoised_image_ = cv::Mat(
+    noisy_image_.size(),
+    noisy_image_.depth(),
+    cv::Scalar::all(0)
+  );
   cv::fastNlMeansDenoising(
     noisy_image_,
     denoised_image_,
@@ -55,7 +59,9 @@ void ImageDenoising::process_data() {
 }
 
 void ImageDenoising::write_outputs(
-  cv::Mat& _denoised_image, cv::Mat& _noise, double& _noise_ratio
+  cv::Mat& _denoised_image,
+  cv::Mat& _noise,
+  double& _noise_ratio
 ) {
   // Pass the values of scores to the MAPS wrapper
   _denoised_image = denoised_image_.clone();
@@ -65,7 +71,9 @@ void ImageDenoising::write_outputs(
 
 template <typename T>
 void ImageDenoising::get_limits(
-  const cv::Mat image, T& min_limit, T& max_limit
+  const cv::Mat image,
+  T& min_limit,
+  T& max_limit
 ) {
   switch (image.depth()) {
     case 0:

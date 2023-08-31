@@ -1,8 +1,6 @@
 #pragma once
 
 // Standard
-#include <algorithm>
-#include <iostream>
 #include <vector>
 // 3rd-parties
 #include <opencv2/opencv.hpp>
@@ -13,19 +11,19 @@ public:
   ~SphericalProjection();
 
   void set_parameters(
-    int _height,
-    int _width,
-    double _elevation_max,
-    double _elevation_min,
-    double _elevation_resolution,
-    double _azimuth_max,
-    double _azimuth_min,
-    double _azimuth_resolution
+    const int _height,
+    const int _width,
+    const double _elevation_max,
+    const double _elevation_min,
+    const double _elevation_resolution,
+    const double _azimuth_max,
+    const double _azimuth_min,
+    const double _azimuth_resolution
   );
   void read_inputs(
-    std::vector<double>& _azimuths,
-    std::vector<double>& _iDistances,
-    std::vector<double>& _intensities
+    const std::vector<double>& _azimuths,
+    const std::vector<double>& _iDistances,
+    const std::vector<double>& _intensities
   );
   void process_data();
   void write_outputs(cv::Mat& _image);

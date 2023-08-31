@@ -1,8 +1,8 @@
 add_library(point_cloud_denoising STATIC)
 target_sources(point_cloud_denoising PRIVATE
-  CSVReader.hpp             CSVReader.cpp
-  ImageDenoising.hpp        ImageDenoising.cpp
-  SphericalProjection.hpp   SphericalProjection.cpp
+  csv_reader.hpp             csv_reader.cpp
+  image_denoising.hpp        image_denoising.cpp
+  spherical_projection.hpp   spherical_projection.cpp
   rapidcsv.h
 )
 target_include_directories(point_cloud_denoising PUBLIC

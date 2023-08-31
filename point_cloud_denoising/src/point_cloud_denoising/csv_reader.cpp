@@ -1,18 +1,23 @@
-#include "CSVReader.hpp"
+// 3rd-parties
+#include "rapidcsv.h"
+// Local
+#include "csv_reader.hpp"
 
 CSVReader::CSVReader() {}
 
 CSVReader::~CSVReader() {}
 
 void CSVReader::set_parameters(
-  double _unit, int _column_name_index, int _row_name_index
+  const double _unit,
+  const int _column_name_index,
+  const int _row_name_index
 ) {
   unit_              = _unit;
   column_name_index_ = _column_name_index;
   row_name_index_    = _row_name_index;
 }
 
-void CSVReader::read_inputs(const std::string _data_file) {
+void CSVReader::read_inputs(const std::string& _data_file) {
   data_file_ = _data_file;
 }
 

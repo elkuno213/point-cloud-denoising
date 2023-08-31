@@ -3,8 +3,6 @@
 // Standard
 #include <iostream>
 #include <vector>
-// 3rd-parties
-#include "rapidcsv.h"
 
 class CSVReader {
 public:
@@ -12,8 +10,12 @@ public:
   ~CSVReader();
 
 public:
-  void set_parameters(double _unit, int _column_name_index, int _row_name_index);
-  void read_inputs(const std::string _data_file);
+  void set_parameters(
+    const double _unit,
+    const int _column_name_index,
+    const int _row_name_index
+  );
+  void read_inputs(const std::string& _data_file);
   void process_data();
   void write_outputs(std::vector<std::vector<double>>& _data);
 

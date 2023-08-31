@@ -1,18 +1,21 @@
-#include "SphericalProjection.hpp"
+// Standard
+#include <algorithm>
+// Local
+#include "spherical_projection.hpp"
 
 SphericalProjection::SphericalProjection() {}
 
 SphericalProjection::~SphericalProjection() {}
 
 void SphericalProjection::set_parameters(
-  int _height,
-  int _width,
-  double _elevation_max,
-  double _elevation_min,
-  double _elevation_resolution,
-  double _azimuth_max,
-  double _azimuth_min,
-  double _azimuth_resolution
+  const int _height,
+  const int _width,
+  const double _elevation_max,
+  const double _elevation_min,
+  const double _elevation_resolution,
+  const double _azimuth_max,
+  const double _azimuth_min,
+  const double _azimuth_resolution
 ) {
   height_               = _height;          // pixel
   width_                = _width;           // pixel
@@ -25,9 +28,9 @@ void SphericalProjection::set_parameters(
 }
 
 void SphericalProjection::read_inputs(
-  std::vector<double>& _azimuths,
-  std::vector<double>& _distances,
-  std::vector<double>& _intensities
+  const std::vector<double>& _azimuths,
+  const std::vector<double>& _distances,
+  const std::vector<double>& _intensities
 ) {
   azimuths_    = _azimuths;
   distances_   = _distances;

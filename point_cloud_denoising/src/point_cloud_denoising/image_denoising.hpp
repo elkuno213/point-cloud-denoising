@@ -12,15 +12,17 @@ public:
 
 public:
   void set_parameters(
-    float _h,
-    int _template_window_size,
-    int _search_window_size,
-    double _non_noise_level
+    const float _h,
+    const int _template_window_size,
+    const int _search_window_size,
+    const double _non_noise_level
   );
-  void read_inputs(cv::Mat& _noisy_image);
+  void read_inputs(const cv::Mat& _noisy_image);
   void process_data();
   void write_outputs(
-    cv::Mat& _denoised_image, cv::Mat& _noise, double& _noise_ratio
+    cv::Mat& _denoised_image,
+    cv::Mat& _noise,
+    double& _noise_ratio
   );
 
 private:
