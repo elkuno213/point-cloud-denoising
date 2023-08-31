@@ -1,0 +1,26 @@
+services:
+  point-cloud-denoising:
+    container_name: point-cloud-denoising
+    image: huynhvuh/hvh:complete
+    environment:
+      - DISPLAY=point-cloud-denoising-novnc:0.0
+    networks:
+      - point-cloud-denoising-network
+    tty: true
+
+  point-cloud-denoising-novnc:
+    container_name: point-cloud-denoising-novnc
+    image: "theasp/novnc:latest"
+    environment:
+      - DISPLAY_WIDTH=1920
+      - DISPLAY_HEIGHT=1080
+      - RUN_XTERM=no
+      - RUN_FLUXBOX=yes
+    ports:
+      - "8080:8080" # http://localhost:8080/vnc.html
+    networks:
+      - point-cloud-denoising-network
+
+networks:
+  point-cloud-denoising-network:
+    name: point-cloud-denoising-network
