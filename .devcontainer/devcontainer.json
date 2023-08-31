@@ -1,22 +1,17 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
 {
-  "name": "${containerWorkspaceFolder}",
+	"name": "${containerWorkspaceFolder}",
 
-	// Use already-built image
-	"image": "huynhvuh/hvhrobotics:ubuntu-stable",
-	// "image": "hvhrobotics:ubuntu-dev",
+	"dockerComposeFile": [
+		"../compose.yaml",
+		"docker-compose.yml"
+	],
 
-	// // Build an image based on Dockerfile
-	// "build": {
-	// 	"context": "..",
-	// 	"dockerfile": "../Dockerfile.ubuntu-stable",
-	// 	"args": {
-	// 		"tag": "hvhrobotics:ubuntu-stable"
-	// 	}
-	// },
+	"service": "point-cloud-denoising",
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:2": {
 			"installZsh": true,
@@ -24,54 +19,31 @@
 			"installOhMyZsh": true
 		},
 		"ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {
-			"plugins": "git zsh-autosuggestions zsh-syntax-highlighting dirhistory history colored-man-pages web-search docker",
+			"plugins": "git zsh-autosuggestions zsh-syntax-highlighting",
 			"omzPlugins": "https://github.com/zsh-users/zsh-autosuggestions https://github.com/zsh-users/zsh-syntax-highlighting.git",
 			"username": "nonroot"
 		},
 	},
 
-	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
 			"settings": {
-				// editor
-				"editor.semanticHighlighting.enabled": true,
-				"editor.unicodeHighlight.nonBasicASCII": false,
-				"editor.renderWhitespace": "boundary",
-				"editor.tabSize": 2,
-				"editor.formatOnSave": false,
-				"editor.foldingHighlight": false,
-				"editor.rulers": [80, 100],
-				"explorer.confirmDelete": false,
-				"explorer.confirmDragAndDrop": false,
-				"files.eol": "\n",
-				"files.insertFinalNewline": true,
-				"files.trimTrailingWhitespace": true,
-				"files.autoGuessEncoding": true,
-				"workbench.editorAssociations": {
-					"*.ipynb": "jupyter-notebook"
-				},
-				"terminal.integrated.inheritEnv": false,
-				"terminal.integrated.enableMultiLinePasteWarning": false,
-				"security.workspace.trust.untrustedFiles": "open",
-				"debug.onTaskErrors": "debugAnyway",
-				"keyboard.dispatch": "keyCode",
-				"window.zoomLevel": 1,
 				// zsh
 				"terminal.integrated.defaultProfile.linux": "zsh",
-				"terminal.integrated.profiles.linux": {
-					"bash": {
-						"path": "bash",
-						"icon": "terminal-bash"
-					},
-					"zsh": {
-						"path": "zsh"
-					}
-				},
 				// Git
 				"git.confirmSync": false,
 				"git.ignoreMissingGitWarning": true,
 				"git.openRepositoryInParentFolders": "never",
+				// clang-format
+				"[cpp]": {
+					"editor.defaultFormatter": "xaver.clang-format"
+				},
+				"clang-format.fallbackStyle": "Google",
+				"clang-format.language.cpp.fallbackStyle": "Google",
+				"clang-format.language.cpp.style": "file",
+				"clang-format.executable": "/usr/bin/clang-format-14",
+				"clang-format.assumeFilename": "${workspaceFolder}/.clang-format",
+
 			},
 			"extensions": [
 				"ms-vscode.cpptools-extension-pack",
@@ -79,21 +51,12 @@
 				"llvm-vs-code-extensions.vscode-clangd",
 				"Gruntfuggly.todo-tree",
 				"VisualStudioExptTeam.vscodeintellicode",
-				"ms-azuretools.vscode-docker",
-				"redhat.vscode-xml",
-				"vadimcn.vscode-lldb",
 				"ms-iot.vscode-ros"
 			]
 		}
 	},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
 
-	// Uncomment the next line to run commands after the container is created.
 	"postCreateCommand": "echo 'source /opt/ros/noetic/setup.bash' >> ~/.bashrc && echo 'source /opt/ros/noetic/setup.zsh' >> ~/.zshrc",
-
-	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "devcontainer"
 
 	"containerUser": "nonroot"
 }
