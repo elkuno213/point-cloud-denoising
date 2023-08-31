@@ -30,35 +30,6 @@ void create_directory(const std::string& directory) {
   std::filesystem::create_directories(directory);
 }
 
-cv::Mat add_noise(
-  const cv::Mat& image, const double mean = 0.0, const double std_dev = 1.0
-) {
-  cv::Mat noise = cv::Mat(image.size(), image.depth());
-  cv::randn(noise, cv::Scalar::all(mean), cv::Scalar::all(std_dev));
-  cv::Mat noisy_image;
-  cv::addWeighted(image, 0.5, noise, 0.5, 0.0, noisy_image);
-  return noisy_image;
-}
-
-void display_min_max_loc(cv::Mat& image) {
-  double min_value, max_value;
-  cv::Point2i minLoc, max_loc;
-  cv::minMaxLoc(image, &min_value, &max_value, &minLoc, &max_loc);
-  std::cout << "(min_value, max_value, minLoc, max_loc):\t(" << min_value
-            << "; \t" << max_value << "; \t" << minLoc << "; \t" << max_loc
-            << ")\n";
-}
-
-template <typename T>
-void display_vector_2d(const std::vector<std::vector<T>>& vector) {
-  for (const auto& row : vector) {
-    for (const auto& e : row) {
-      std::cout << e << ' ';
-    }
-    std::cout << '\n';
-  }
-}
-
 bool parse_parameters(
   const std::string& params_file,
   std::string& data_folder,
