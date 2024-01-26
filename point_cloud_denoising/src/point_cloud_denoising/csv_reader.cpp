@@ -12,8 +12,6 @@ CSVReader::CSVReader(
   , row_name_index_{_row_name_index}
 {}
 
-CSVReader::~CSVReader() {}
-
 std::vector<std::vector<double>> CSVReader::read(
   const std::string& csv_file
 ) const {

@@ -13,7 +13,6 @@ public:
     const int _search_window_size,
     const double _non_noise_level
   );
-  ~ImageDenoising();
 
 public:
   void compute(

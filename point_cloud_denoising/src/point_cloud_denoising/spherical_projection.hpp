@@ -17,7 +17,6 @@ public:
     const double _azimuth_min,
     const double _azimuth_resolution
   );
-  ~SphericalProjection();
 
   cv::Mat compute(
     const std::vector<double>& azimuths,

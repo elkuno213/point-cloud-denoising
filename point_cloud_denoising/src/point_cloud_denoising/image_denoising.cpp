@@ -11,8 +11,6 @@ ImageDenoising::ImageDenoising(
   , non_noise_level_{_non_noise_level}
 {}
 
-ImageDenoising::~ImageDenoising() {}
-
 void ImageDenoising::compute(
   const cv::Mat& noisy_image,
   cv::Mat& denoised_image,

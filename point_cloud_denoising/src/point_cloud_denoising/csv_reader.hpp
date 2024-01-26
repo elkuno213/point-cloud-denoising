@@ -12,7 +12,6 @@ public:
     const int _column_name_index,
     const int _row_name_index
   );
-  ~CSVReader();
 
 public:
   std::vector<std::vector<double>> read(const std::string& csv_file) const;

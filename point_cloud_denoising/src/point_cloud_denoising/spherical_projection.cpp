@@ -22,8 +22,6 @@ SphericalProjection::SphericalProjection(
   , azimuth_resolution_{_azimuth_resolution}
 {}
 
-SphericalProjection::~SphericalProjection() {}
-
 cv::Mat SphericalProjection::compute(
   const std::vector<double>& azimuths,
   const std::vector<double>& distances,
