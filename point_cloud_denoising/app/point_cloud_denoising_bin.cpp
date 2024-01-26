@@ -344,38 +344,26 @@ int main(int argc, char* argv[]) {
   create_directory(intensity_noise_folder_path);
 
   // Azimuth reading
-  CSVReader azimuth_reader;
-  std::vector<std::vector<double>> azimuth_data;
-  azimuth_reader.set_parameters(0.01, -1, 0);
-  azimuth_reader.read_inputs(
+  auto azimuth_reader = CSVReader{0.01, -1, 0};
+  const auto azimuth_data = azimuth_reader.read(
     (std::filesystem::path(data_folder) / std::string("azimuths.csv")).string()
   );
-  azimuth_reader.process_data();
-  azimuth_reader.write_outputs(azimuth_data);
   std::cout << "azimuth_data:\t(" << azimuth_data.size() << " rows, "
             << azimuth_data[0].size() << " cols)" << '\n';
 
   // Distance reading
-  CSVReader distance_reader;
-  std::vector<std::vector<double>> distance_data;
-  distance_reader.set_parameters(0.004, -1, 0);
-  distance_reader.read_inputs(
+  auto distance_reader = CSVReader{0.004, -1, 0};
+  const auto distance_data = distance_reader.read(
     (std::filesystem::path(data_folder) / std::string("distances.csv")).string()
   );
-  distance_reader.process_data();
-  distance_reader.write_outputs(distance_data);
   std::cout << "distance_data:\t(" << distance_data.size() << " rows, "
             << distance_data[0].size() << " cols)" << '\n';
 
   // Intensity reading
-  CSVReader intensity_reader;
-  std::vector<std::vector<double>> intensity_data;
-  intensity_reader.set_parameters(1, -1, 0);
-  intensity_reader.read_inputs((std::filesystem::path(data_folder)
-                                / std::string("intensities.csv"))
-                                 .string());
-  intensity_reader.process_data();
-  intensity_reader.write_outputs(intensity_data);
+  auto intensity_reader = CSVReader{1, -1, 0};
+  const auto intensity_data = intensity_reader.read(
+    (std::filesystem::path(data_folder) / std::string("intensities.csv")).string()
+  );
   std::cout << "intensity_data:\t(" << intensity_data.size() << " rows, "
             << intensity_data[0].size() << " cols)" << '\n';
 
@@ -412,23 +400,16 @@ int main(int argc, char* argv[]) {
   // PointCloud Denosing
   for (std::size_t i{0}; i < azimuth_data.size(); ++i) {
     // Spherical projection
-    cv::Mat image;
-    SphericalProjection spherical_projection;
-    spherical_projection.set_parameters(
-      height,
-      width,
-      elevation_max,
-      elevation_min,
-      elevation_resolution,
-      azimuth_max,
-      azimuth_min,
-      azimuth_resolution
+    auto spherical_projection = SphericalProjection{
+      height, width,
+      elevation_max, elevation_min, elevation_resolution,
+      azimuth_max, azimuth_min, azimuth_resolution
+    };
+    cv::Mat image = spherical_projection.compute(
+      azimuth_data[i],
+      distance_data[i],
+      intensity_data[i]
     );
-    spherical_projection.read_inputs(
-      azimuth_data[i], distance_data[i], intensity_data[i]
-    );
-    spherical_projection.process_data();
-    spherical_projection.write_outputs(image);
 
     // Split channels
     std::vector<cv::Mat> channels(4);
@@ -461,17 +442,17 @@ int main(int argc, char* argv[]) {
     // Denoise distance image
     cv::Mat denoised_distance_image, distance_noise;
     double distance_noise_ratio;
-    ImageDenoising image_denoising_distance;
-    image_denoising_distance.set_parameters(
+    auto image_denoising_distance = ImageDenoising{
       distance_h,
       distance_template_window_size,
       distance_search_window_size,
       distance_non_noise_level
-    );
-    image_denoising_distance.read_inputs(distance_image);
-    image_denoising_distance.process_data();
-    image_denoising_distance.write_outputs(
-      denoised_distance_image, distance_noise, distance_noise_ratio
+    };
+    image_denoising_distance.compute(
+      distance_image,
+      denoised_distance_image,
+      distance_noise,
+      distance_noise_ratio
     );
     video_denoised_distance.write(denoised_distance_image);
     {
@@ -501,17 +482,17 @@ int main(int argc, char* argv[]) {
     // Denoise intensity image
     cv::Mat denoised_intensity_image, intensity_noise;
     double intensity_noise_ratio;
-    ImageDenoising image_denoising_intensity;
-    image_denoising_intensity.set_parameters(
+    auto image_denoising_intensity = ImageDenoising{
       intensity_h,
       intensity_template_window_size,
       intensity_search_window_size,
       intensity_non_noise_level
-    );
-    image_denoising_intensity.read_inputs(intensity_image);
-    image_denoising_intensity.process_data();
-    image_denoising_intensity.write_outputs(
-      denoised_intensity_image, intensity_noise, intensity_noise_ratio
+    };
+    image_denoising_intensity.compute(
+      intensity_image,
+      denoised_intensity_image,
+      intensity_noise,
+      intensity_noise_ratio
     );
     std::cout << "intensity_noise_ratio:\t" << intensity_noise_ratio << '\n';
     video_denoised_intensity.write(denoised_intensity_image);

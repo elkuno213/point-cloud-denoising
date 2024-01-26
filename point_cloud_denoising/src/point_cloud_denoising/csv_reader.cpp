@@ -3,30 +3,29 @@
 // Local
 #include "csv_reader.hpp"
 
-CSVReader::CSVReader() {}
-
-CSVReader::~CSVReader() {}
-
-void CSVReader::set_parameters(
+CSVReader::CSVReader(
   const double _unit,
   const int _column_name_index,
   const int _row_name_index
-) {
-  unit_              = _unit;
-  column_name_index_ = _column_name_index;
-  row_name_index_    = _row_name_index;
-}
+) : unit_{_unit}
+  , column_name_index_{_column_name_index}
+  , row_name_index_{_row_name_index}
+{}
 
-void CSVReader::read_inputs(const std::string& _data_file) {
-  data_file_ = _data_file;
-}
+CSVReader::~CSVReader() {}
 
-void CSVReader::process_data() {
+std::vector<std::vector<double>> CSVReader::read(
+  const std::string& csv_file
+) const {
+  // Initialize document.
   rapidcsv::Document CSVDoc(
-    data_file_,
+    csv_file,
     rapidcsv::LabelParams(column_name_index_, row_name_index_),
     rapidcsv::SeparatorParams(';')
   );
+
+  // Read 2D data.
+  std::vector<std::vector<double>> data;
   for (std::size_t i = 0; i < CSVDoc.GetRowCount(); ++i) {
     std::vector<double> row = CSVDoc.GetRow<double>(i);
     if (unit_ != 1.0) {
@@ -37,10 +36,8 @@ void CSVReader::process_data() {
         [this](double& element) { return element * unit_; }
       );
     }
-    data_.push_back(row);
+    data.push_back(row);
   }
-}
 
-void CSVReader::write_outputs(std::vector<std::vector<double>>& _data) {
-  _data = data_;
+  return data;
 }

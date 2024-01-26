@@ -7,10 +7,7 @@
 
 class SphericalProjection {
 public:
-  SphericalProjection();
-  ~SphericalProjection();
-
-  void set_parameters(
+  SphericalProjection(
     const int _height,
     const int _width,
     const double _elevation_max,
@@ -20,13 +17,13 @@ public:
     const double _azimuth_min,
     const double _azimuth_resolution
   );
-  void read_inputs(
-    const std::vector<double>& _azimuths,
-    const std::vector<double>& _iDistances,
-    const std::vector<double>& _intensities
+  ~SphericalProjection();
+
+  cv::Mat compute(
+    const std::vector<double>& azimuths,
+    const std::vector<double>& distances,
+    const std::vector<double>& intensities
   );
-  void process_data();
-  void write_outputs(cv::Mat& _image);
 
 private:
   // Check angle by:
@@ -41,20 +38,11 @@ private:
     const double angle_max,
     const double angle_min,
     const double angle_resolution
-  );
+  ) const;
   // Project a point into image plane.
-  cv::Point2i project(const double elevation, const double azimuth);
+  cv::Point2i project(const double elevation, const double azimuth) const;
 
 private:
-  // Inputs
-  std::vector<double> azimuths_;
-  std::vector<double> distances_;
-  std::vector<double> intensities_;
-
-  // Outputs
-  cv::Mat image_; // Multi-channel Image (Channels: distance, elevation,
-                  // azimuth, intensity)
-
   // Parameters
   int height_                  = 32;   // Image height (pixel)
   int width_                   = 512;  // Image width (pixel)

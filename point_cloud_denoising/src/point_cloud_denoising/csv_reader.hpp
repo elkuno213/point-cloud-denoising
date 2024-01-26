@@ -4,28 +4,20 @@
 #include <iostream>
 #include <vector>
 
+// Read a CSV file and output 2D data vector.
 class CSVReader {
 public:
-  CSVReader();
-  ~CSVReader();
-
-public:
-  void set_parameters(
+  CSVReader(
     const double _unit,
     const int _column_name_index,
     const int _row_name_index
   );
-  void read_inputs(const std::string& _data_file);
-  void process_data();
-  void write_outputs(std::vector<std::vector<double>>& _data);
+  ~CSVReader();
+
+public:
+  std::vector<std::vector<double>> read(const std::string& csv_file) const;
 
 private:
-  // Inputs
-  std::string data_file_; // Path to data file
-
-  // Outputs
-  std::vector<std::vector<double>> data_; // Output data 2D vector
-
   // Data unit coefficient
   double unit_ = 1.;
   // Zero-based row index of the column labels (-1 gives access to all rows as

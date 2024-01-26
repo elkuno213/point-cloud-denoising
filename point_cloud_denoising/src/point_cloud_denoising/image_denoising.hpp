@@ -7,37 +7,31 @@
 
 class ImageDenoising {
 public:
-  ImageDenoising();
-  ~ImageDenoising();
-
-public:
-  void set_parameters(
+  ImageDenoising(
     const float _h,
     const int _template_window_size,
     const int _search_window_size,
     const double _non_noise_level
   );
-  void read_inputs(const cv::Mat& _noisy_image);
-  void process_data();
-  void write_outputs(
+  ~ImageDenoising();
+
+public:
+  void compute(
+    // Input noisy image
+    const cv::Mat& _noisy_image,
+    // Output denoised image
     cv::Mat& _denoised_image,
+    // Output noise
     cv::Mat& _noise,
+    // Percentage of noise of output noise
     double& _noise_ratio
-  );
+  ) const;
 
 private:
   template <typename T>
-  void get_limits(const cv::Mat image, T& min_limit, T& max_limit);
+  void get_limits(const cv::Mat image, T& min_limit, T& max_limit) const;
 
 private:
-  // Inputs
-  cv::Mat noisy_image_; // Input noisy image
-
-  // Outputs
-  cv::Mat denoised_image_; // Output denoised image
-  cv::Mat noise_;          // Output noise
-  double noise_ratio_;     // Percentage of noise of output noise
-
   // Parameter regulating filter strength.
   // Big h value perfectly removes noise but also removes image
   // details. Smaller h value preserves details but also
